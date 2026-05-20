@@ -1,0 +1,323 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="Volunteer_Recruit">
+
+<insert id="insert_Volunteer_Recruit" parameterType="Volunteer_RecruitVO">
+insert into VOLUNTEER_RECRUIT (
+        RECRUIT_ID,
+        TITLE,
+        CONTENT,
+        VOLUNTEER_DATE,
+        LOCATION,
+        APPLY_DEADLINE,
+        CREATE_DATE,
+        STATUS,
+        MEMBER_ID,
+        THUMBNAIL_IMG
+    )
+    VALUES
+    (
+        SEQ_VOLUNTEER_RECRUIT.NEXTVAL,
+        #{title},
+        #{content},
+        #{volunteerDate},
+        #{location},
+        #{applyDeadline},
+        SYSDATE,
+        #{status},
+        #{memberId},
+        #{thumbnailImg}
+    )
+</insert>
+
+
+<select id="list_Volunteer_Recruit" resultType="Volunteer_RecruitVO">
+select RECRUIT_ID        AS recruitId,
+        TITLE             AS title,
+        CONTENT           AS content,
+        VOLUNTEER_DATE    AS volunteerDate,
+        LOCATION          AS location,
+        APPLY_DEADLINE    AS applyDeadline,
+        CREATE_DATE       AS createDate,
+        STATUS            AS status,
+        MEMBER_ID         AS memberId,
+        THUMBNAIL_IMG     AS thumbnailImg
+    FROM VOLUNTEER_RECRUIT
+    ORDER BY RECRUIT_ID DESC
+
+</select>
+
+<select id="getTotalCount" resultType="int">
+SELECT COUNT(*)
+    FROM VOLUNTEER_RECRUIT
+    <where>
+        <if test="status != null and status != ''">
+            STATUS = #{status}
+        </if>
+
+        <if test="keyword != null and keyword != ''">
+            AND (
+                TITLE LIKE '%' || #{keyword} || '%'
+                OR CONTENT LIKE '%' || #{keyword} || '%'
+                OR LOCATION LIKE '%' || #{keyword} || '%'
+            )
+        </if>
+    </where>
+</select>
+
+<select id="listByPage" parameterType="pageVO" resultType="Volunteer_RecruitVO">
+SELECT *
+    FROM (
+        SELECT ROWNUM RN, A.*
+        FROM (
+            SELECT
+                RECRUIT_ID      AS recruitId,
+                TITLE           AS title,
+                CONTENT         AS content,
+                VOLUNTEER_DATE  AS volunteerDate,
+                LOCATION        AS location,
+                APPLY_DEADLINE  AS applyDeadline,
+                CREATE_DATE     AS createDate,
+                STATUS          AS status,
+                MEMBER_ID       AS memberId,
+                THUMBNAIL_IMG   AS thumbnailImg
+            FROM VOLUNTEER_RECRUIT
+            <where>
+                <if test="status != null and status != ''">
+                    STATUS = #{status}
+                </if>
+
+                <if test="keyword != null and keyword != ''">
+                    AND (
+                        TITLE LIKE '%' || #{keyword} || '%'
+                        OR CONTENT LIKE '%' || #{keyword} || '%'
+                        OR LOCATION LIKE '%' || #{keyword} || '%'
+                    )
+                </if>
+            </where>
+
+            <choose>
+                <when test="sort == 'deadline'">
+                    ORDER BY APPLY_DEADLINE ASC, RECRUIT_ID DESC
+                </when>
+                <otherwise>
+                    ORDER BY RECRUIT_ID DESC
+                </otherwise>
+            </choose>
+        ) A
+    )
+    WHERE RN BETWEEN #{startRow} AND #{endRow}
+
+</select>
+
+<select id="getVolunteerRecruitDetail" parameterType="int" resultType="Volunteer_RecruitVO">
+	select  RECRUIT_ID      AS recruitId,
+        TITLE           AS title,
+        CONTENT         AS content,
+        VOLUNTEER_DATE  AS volunteerDate,
+        LOCATION        AS location,
+        APPLY_DEADLINE  AS applyDeadline,
+        CREATE_DATE     AS createDate,
+        STATUS          AS status,
+        MEMBER_ID       AS memberId,
+        THUMBNAIL_IMG   AS thumbnailImg
+         from VOLUNTEER_RECRUIT
+	where RECRUIT_ID =#{value}
+	</select>
+	
+	<select id="getRecruitDetailList"
+        parameterType="int"
+        resultType="kr.or.ddit.volunteer_recruit.vo.Volunteer_RecruitDetailVO">
+    SELECT
+        VRD.RECRUIT_DETAIL_ID AS recruitDetailId,
+        VRD.RECRUIT_ID        AS recruitId,
+        VRD.INTEREST_TYPE     AS interestType,
+        VRD.CAPACITY          AS capacity,
+        (
+            SELECT COUNT(*)
+            FROM VOLUNTEER_APPLY VA
+            WHERE VA.RECRUIT_ID = VRD.RECRUIT_ID
+              AND VA.INTEREST_TYPE = VRD.INTEREST_TYPE
+              AND VA.STATUS = '승인'
+        ) AS applyCount
+    FROM VOLUNTEER_RECRUIT_DETAIL VRD
+    WHERE VRD.RECRUIT_ID = #{recruitId}
+    ORDER BY VRD.RECRUIT_DETAIL_ID
+</select>
+
+<select id="checkDuplicate" parameterType="Volunteer_ApplyVO" resultType="int">
+   SELECT COUNT(*)
+    FROM VOLUNTEER_APPLY
+    WHERE MEMBER_ID = #{memberId}
+      AND RECRUIT_ID = #{recruitId}
+</select>
+	
+	
+<select id ="getApplyCount" parameterType="Volunteer_ApplyVO" resultType="int">
+    SELECT COUNT(*)
+    FROM VOLUNTEER_APPLY
+    WHERE RECRUIT_ID = #{recruitId}
+      AND INTEREST_TYPE = #{interestType}
+      AND STATUS = '승인'
+</select>
+
+<select id="getCapacity" parameterType="Volunteer_ApplyVO" resultType="int">
+    SELECT NVL(CAPACITY, 0)
+    FROM VOLUNTEER_RECRUIT_DETAIL
+    WHERE RECRUIT_ID = #{recruitId}
+      AND INTEREST_TYPE = #{interestType}
+</select>
+
+<insert id="insertApply" parameterType="Volunteer_ApplyVO">
+    <selectKey keyProperty="volunteerId" resultType="int" order="BEFORE">
+        SELECT SEQ_VOLUNTEER_APPLY.NEXTVAL FROM DUAL
+    </selectKey>
+
+    INSERT INTO VOLUNTEER_APPLY
+    (
+        VOLUNTEER_ID,
+        MEMBER_ID,
+        RECRUIT_ID,
+        VOLUNTEER_DATE,
+        INTEREST_TYPE,
+        STATUS,
+        APPLY_REASON,
+        APPLY_DATE
+    )
+    VALUES
+    (
+        #{volunteerId},
+        #{memberId},
+        #{recruitId},
+        #{volunteerDate},
+        #{interestType},
+        #{status},
+        #{applyReason},
+        SYSDATE
+    )
+</insert>
+
+<insert id ="insertVolunteerRecruit" parameterType ="Volunteer_RecruitVO">
+	<selectKey keyProperty="recruitId" resultType="int" order="BEFORE">
+	select SEQ_VOLUNTEER_RECRUIT.NEXTVAL FROM DUAL
+	</selectKey>
+	INSERT INTO VOLUNTEER_RECRUIT
+	(
+		RECRUIT_ID,
+        TITLE,
+        CONTENT,
+        VOLUNTEER_DATE,
+        LOCATION,
+        APPLY_DEADLINE,
+        CREATE_DATE,
+        STATUS,
+        MEMBER_ID,
+        THUMBNAIL_IMG
+	
+	)
+	VALUES(
+	#{recruitId},
+        #{title},
+        #{content},
+        #{volunteerDate, jdbcType=DATE},
+        #{location},
+        #{applyDeadline, jdbcType=DATE},
+        SYSDATE,
+        #{status},
+        #{memberId},
+        #{thumbnailImg}
+	)
+	
+</insert>
+	<insert id="insertVolunteerRecruitDetail" parameterType="kr.or.ddit.volunteer_recruit.vo.Volunteer_RecruitDetailVO">
+    <selectKey keyProperty="recruitDetailId" resultType="int" order="BEFORE">
+        SELECT SEQ_VOLUNTEER_RECRUIT_DETAIL.NEXTVAL FROM DUAL
+    </selectKey>
+
+    INSERT INTO VOLUNTEER_RECRUIT_DETAIL
+    (
+        RECRUIT_DETAIL_ID,
+        RECRUIT_ID,
+        INTEREST_TYPE,
+        CAPACITY
+    )
+    VALUES
+    (
+        #{recruitDetailId},
+        #{recruitId},
+        #{interestType},
+        #{capacity}
+    )
+</insert>
+
+<update id ="updateVolunteerRecruit" parameterType="Volunteer_RecruitVO">
+	update VOLUNTEER_RECRUIT SET
+		TITLE = #{title},
+        CONTENT = #{content},
+        VOLUNTEER_DATE = #{volunteerDate, jdbcType=DATE},
+        LOCATION = #{location},
+        APPLY_DEADLINE = #{applyDeadline, jdbcType=DATE},
+        THUMBNAIL_IMG = #{thumbnailImg}
+    WHERE RECRUIT_ID = #{recruitId}
+</update>
+
+<update id="updateVolunteerRecruitDetail" parameterType="Volunteer_RecruitDetailVO">
+    UPDATE VOLUNTEER_RECRUIT_DETAIL
+    SET CAPACITY = #{capacity}
+    WHERE RECRUIT_ID = #{recruitId}
+      AND INTEREST_TYPE = #{interestType}
+</update>
+
+<delete id="deleteVolunteerRecruit" parameterType="int">
+    DELETE FROM VOLUNTEER_RECRUIT
+    WHERE RECRUIT_ID = #{value}
+</delete>
+
+<update id="closeExpiredRecruits">
+    <![CDATA[
+    UPDATE VOLUNTEER_RECRUIT
+    SET STATUS = '모집마감'
+    WHERE STATUS = '모집중'
+      AND APPLY_DEADLINE < TRUNC(SYSDATE)
+    ]]>
+</update>
+
+<!-- 2. 총 모집 인원이 다 찬 모집글 찾기 -->
+<select id="getFullRecruitIds" resultType="int">
+    SELECT VR.RECRUIT_ID
+    FROM VOLUNTEER_RECRUIT VR
+    JOIN (
+        SELECT RECRUIT_ID, SUM(CAPACITY) AS TOTAL_CAPACITY
+        FROM VOLUNTEER_RECRUIT_DETAIL
+        GROUP BY RECRUIT_ID
+    ) D
+      ON VR.RECRUIT_ID = D.RECRUIT_ID
+    JOIN (
+        SELECT RECRUIT_ID, COUNT(*) AS TOTAL_APPLY
+        FROM VOLUNTEER_APPLY
+        WHERE STATUS = '승인'
+        GROUP BY RECRUIT_ID
+    ) A
+      ON VR.RECRUIT_ID = A.RECRUIT_ID
+    WHERE VR.STATUS = '모집중'
+      AND A.TOTAL_APPLY >= D.TOTAL_CAPACITY
+</select>
+
+<!-- 3. 특정 모집글 상태를 모집마감으로 변경 -->
+<update id="updateRecruitStatusToClosed" parameterType="int">
+    UPDATE VOLUNTEER_RECRUIT
+    SET STATUS = '모집마감'
+    WHERE RECRUIT_ID = #{value}
+</update>
+
+<!-- 4. 신청 시 현재 모집 상태 조회 -->
+<select id="getRecruitStatus" parameterType="int" resultType="String">
+    SELECT STATUS
+    FROM VOLUNTEER_RECRUIT
+    WHERE RECRUIT_ID = #{value}
+</select>
+
+
+
+</mapper>

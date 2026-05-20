@@ -1,0 +1,282 @@
+/* =====================================================
+   mypageActivityAll.css
+   최근 활동 내역 전체보기 페이지 전용 스타일
+   - 공통: common.css / 사이드바·뱃지: mypage.css 참조
+   ===================================================== */
+
+/* --------------------------------------------------
+   페이지 헤더
+-------------------------------------------------- */
+.page-header { margin-bottom: 1.5rem; }
+.page-title  { font-size: 1.875rem; font-weight: 900; color: #0d1117; margin: 0 0 0.4rem; }
+.page-desc   { font-size: 0.9rem; color: #64748b; margin: 0; }
+
+
+/* --------------------------------------------------
+   필터 탭 (언더라인 방식)
+-------------------------------------------------- */
+.activity-tab-bar {
+    display: flex;
+    gap: 0;
+    border-bottom: 1px solid #e2e8f0;
+    margin-bottom: 1.5rem;
+    overflow-x: auto;
+    scrollbar-width: none;         /* Firefox */
+    -ms-overflow-style: none;      /* IE */
+}
+
+.activity-tab-bar::-webkit-scrollbar { display: none; } /* Chrome */
+
+.activity-tab {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.75rem 1.25rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #64748b;
+    text-decoration: none;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    white-space: nowrap;
+    transition: color 0.15s, border-color 0.15s;
+}
+
+.activity-tab:hover { color: #374151; }
+
+.activity-tab.active {
+    color: #ec5b13;
+    border-bottom-color: #ec5b13;
+}
+
+
+/* --------------------------------------------------
+   활동 목록
+-------------------------------------------------- */
+.activity-all-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-bottom: 2rem;
+}
+
+.activity-all-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    background: #fff;
+    border: 1px solid #f1f5f9;
+    border-radius: 0.75rem;
+    padding: 1rem 1.25rem;
+    box-shadow: 0 1px 4px rgba(0,0,0,.04);
+    transition: box-shadow 0.2s;
+}
+
+.activity-all-item:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,.08);
+}
+
+
+/* --------------------------------------------------
+   아이콘
+-------------------------------------------------- */
+.activity-all-item__icon {
+    width: 3rem;
+    height: 3rem;
+    border-radius: 0.6rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.activity-all-item__icon .material-symbols-outlined { font-size: 1.25rem; }
+
+/* 타입별 아이콘 색상 */
+.activity-all-item__icon--primary {
+    background: rgba(236,91,19,.1);
+    color: #ec5b13;
+}
+
+.activity-all-item__icon--green {
+    background: #dcfce7;
+    color: #16a34a;
+}
+
+.activity-all-item__icon--blue {
+    background: #dbeafe;
+    color: #2563eb;
+}
+
+.activity-all-item__icon--pink {
+    background: #fce7f3;
+    color: #db2777;
+}
+
+/* 봉사: emerald → 주황계열 */
+.activity-all-item__icon--emerald {
+    background: rgba(236,91,19,.1);
+    color: #ec5b13;
+}
+
+.activity-all-item__icon--orange {
+    background: rgba(236,91,19,.1);
+    color: #ec5b13;
+}
+
+.activity-all-item__icon--red {
+    background: #fee2e2;
+    color: #dc2626;
+}
+
+
+/* --------------------------------------------------
+   뱃지 (타입별 색상)
+-------------------------------------------------- */
+.badge-pink {
+    background: #fce7f3;
+    color: #db2777;
+    padding: 0.2rem 0.65rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.badge-blue {
+    background: #dbeafe;
+    color: #2563eb;
+    padding: 0.2rem 0.65rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.badge-green {
+    background: #dcfce7;
+    color: #16a34a;
+    padding: 0.2rem 0.65rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+/* 봉사: emerald → 주황계열 */
+.badge-emerald {
+    background: rgba(236,91,19,.1);
+    color: #ec5b13;
+    padding: 0.2rem 0.65rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.badge-red {
+    background: #fee2e2;
+    color: #dc2626;
+    padding: 0.2rem 0.65rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+
+/* --------------------------------------------------
+   본문
+-------------------------------------------------- */
+.activity-all-item__body {
+    flex: 1;
+    min-width: 0;
+}
+
+.activity-all-item__desc {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #1e293b;
+    margin: 0 0 0.2rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.activity-all-item__date {
+    font-size: 0.75rem;
+    color: #94a3b8;
+    margin: 0;
+}
+
+
+/* --------------------------------------------------
+   페이지네이션 (공통 스타일과 동일 구조)
+-------------------------------------------------- */
+.pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    margin-top: 1rem;
+}
+
+.page-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 0.6rem;
+    border: 1px solid #e2e8f0;
+    background: #fff;
+    color: #475569;
+    font-size: 0.875rem;
+    font-weight: 500;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+    font-family: inherit;
+}
+
+.page-btn:hover:not(:disabled):not(.page-btn--active) {
+    background: rgba(236,91,19,.06);
+    color: #ec5b13;
+}
+
+.page-btn--active {
+    background: #ec5b13;
+    color: #fff;
+    border-color: #ec5b13;
+    font-weight: 700;
+    box-shadow: 0 2px 8px rgba(236,91,19,.25);
+    cursor: default;
+}
+
+.page-btn--arrow { color: #94a3b8; }
+
+.page-btn--arrow:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.page-btn .material-symbols-outlined { font-size: 1.2rem; }
+
+
+/* --------------------------------------------------
+   빈 상태
+-------------------------------------------------- */
+.activity-all-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 5rem 2rem;
+    gap: 0.75rem;
+}
+
+.activity-all-empty__icon { font-size: 3.5rem; color: #cbd5e1; }
+.activity-all-empty__msg  { font-size: 1rem; color: #94a3b8; margin: 0; }

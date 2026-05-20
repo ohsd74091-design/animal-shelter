@@ -1,0 +1,731 @@
+@charset "UTF-8";
+
+/* ══════════════════════════════════════════
+   공통 변수
+══════════════════════════════════════════ */
+:root {
+    --orange:       #e67e22;
+    --orange-dark:  #cf6d18;
+    --orange-light: #fff3e6;
+    --text-primary: #1f2937;
+    --text-sub:     #6b7280;
+    --text-muted:   #9ca3af;
+    --border:       #f0ebe4;
+    --bg-page:      #f8f6f2;
+    --bg-white:     #ffffff;
+    --bg-card:      #faf8f5;
+    --radius-sm:    12px;
+    --radius-md:    18px;
+    --radius-lg:    24px;
+    --radius-full:  999px;
+}
+
+/* ══════════════════════════════════════════
+   1. 히어로
+══════════════════════════════════════════ */
+.hero-section {
+    position: relative;
+    width: 100%;
+    height: 700px;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+}
+
+.hero-bg {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+}
+
+.hero-bg__img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    object-position: center;
+    display: block;
+}
+
+.hero-bg__overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        to right,
+        rgba(15,10,5,0.88) 0%,
+        rgba(15,10,5,0.55) 50%,
+        rgba(15,10,5,0.10) 100%
+    );
+}
+
+.hero-content {
+    position: relative;
+    z-index: 1;
+    padding-top: 88px;
+}
+
+.hero-text {
+    max-width: 600px;
+}
+
+/* 배지 */
+.hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 14px;
+    background: rgba(245,158,11,0.18);
+    border: 1px solid rgba(245,158,11,0.45);
+    border-radius: var(--radius-full);
+    color: #f59e0b;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    margin-bottom: 20px;
+}
+.hero-badge .material-symbols-outlined { font-size: 13px; }
+
+/* 제목 */
+.hero-title {
+    font-size: clamp(32px, 4vw, 56px);
+    font-weight: 900;
+    color: #fff;
+    line-height: 1.15;
+    margin: 0 0 16px;
+    letter-spacing: -0.025em;
+}
+.hero-title em { font-style: normal; color: var(--orange); }
+
+/* 설명 */
+.hero-desc {
+    font-size: 16px;
+    color: rgba(255,255,255,0.72);
+    line-height: 1.75;
+    margin: 0 0 32px;
+}
+
+/* 버튼 */
+.hero-btns {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 40px;
+}
+
+.hero-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 28px;
+    border-radius: var(--radius-full);
+    font-size: 15px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: all 0.25s;
+}
+.hero-btn .material-symbols-outlined { font-size: 18px; }
+
+.hero-btn--primary {
+    background: var(--orange);
+    color: #fff;
+    box-shadow: 0 6px 20px rgba(230,126,34,0.4);
+}
+.hero-btn--primary:hover {
+    background: var(--orange-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 28px rgba(230,126,34,0.5);
+}
+
+.hero-btn--ghost {
+    background: rgba(255,255,255,0.12);
+    color: #fff;
+    border: 1.5px solid rgba(255,255,255,0.35);
+    backdrop-filter: blur(8px);
+}
+.hero-btn--ghost:hover {
+    background: rgba(255,255,255,0.22);
+    transform: translateY(-2px);
+}
+
+/* 통계 리본 (템플릿 스타일) */
+.hero-stat-ribbon {
+    display: inline-flex;
+    align-items: center;
+    gap: 32px;
+    background: rgba(255,255,255,0.10);
+    backdrop-filter: blur(16px);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: var(--radius-lg);
+    padding: 20px 32px;
+}
+
+.hero-stat-ribbon__item { text-align: center; }
+
+.hero-stat-ribbon__num {
+    display: block;
+    font-size: 30px;
+    font-weight: 900;
+    color: var(--orange);
+    line-height: 1.1;
+    margin-bottom: 4px;
+}
+
+.hero-stat-ribbon__label {
+    font-size: 11px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.65);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.hero-stat-ribbon__divider {
+    width: 1px;
+    height: 44px;
+    background: rgba(255,255,255,0.2);
+    flex-shrink: 0;
+}
+
+/* 스크롤 힌트 */
+.hero-scroll-hint {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1;
+    color: rgba(255,255,255,0.45);
+    animation: bounceDown 1.8s ease infinite;
+}
+.hero-scroll-hint .material-symbols-outlined { font-size: 28px; }
+
+@keyframes bounceDown {
+    0%, 100% { transform: translateX(-50%) translateY(0); }
+    50%       { transform: translateX(-50%) translateY(8px); }
+}
+
+/* ══════════════════════════════════════════
+   2. 참여 카드 섹션
+══════════════════════════════════════════ */
+.participate-section {
+    background: #fdf9f5;
+    border-bottom: 1px solid var(--border);
+    padding: 60px 0 68px;
+}
+
+.participate-header {
+    text-align: center;
+    margin-bottom: 44px;
+}
+
+.participate-title {
+    font-size: 30px;
+    font-weight: 900;
+    color: var(--text-primary);
+    margin: 0 0 10px;
+    letter-spacing: -0.02em;
+}
+
+.participate-desc {
+    font-size: 14px;
+    color: var(--text-muted);
+    margin: 0;
+}
+
+.participate-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+}
+
+.participate-card {
+    background: var(--bg-white);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 32px 28px 28px;
+    text-decoration: none;
+    display: flex;
+    flex-direction: column;
+    transition: all 0.25s;
+    box-shadow: 0 2px 12px rgba(31,42,68,0.04);
+}
+.participate-card:hover {
+    border-color: var(--orange);
+    transform: translateY(-5px);
+    box-shadow: 0 12px 32px rgba(230,126,34,0.14);
+}
+
+.participate-card__icon-wrap {
+    width: 52px; height: 52px;
+    border-radius: 18px;
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 20px;
+    transition: transform 0.2s;
+}
+.participate-card:hover .participate-card__icon-wrap { transform: scale(1.08); }
+
+.participate-card__icon-wrap--orange {
+    background: var(--orange-light);
+    color: var(--orange);
+}
+.participate-card__icon-wrap .material-symbols-outlined { font-size: 26px; }
+
+.participate-card__body { flex: 1; margin-bottom: 20px; }
+
+.participate-card__title {
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--text-primary);
+    margin: 0 0 8px;
+}
+
+.participate-card__desc {
+    font-size: 13px;
+    color: var(--text-sub);
+    margin: 0;
+    line-height: 1.65;
+}
+
+.participate-card__link {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--orange);
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    transition: gap 0.2s;
+}
+.participate-card:hover .participate-card__link { gap: 8px; }
+
+/* ══════════════════════════════════════════
+   3. 인기 동물 섹션 (슬라이더)
+══════════════════════════════════════════ */
+.animal-section {
+    background: var(--bg-page);
+    padding: 60px 0 68px;
+    border-bottom: 1px solid var(--border);
+}
+
+.animal-section__head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 32px;
+}
+
+.animal-section__title {
+    font-size: 30px;
+    font-weight: 900;
+    color: var(--text-primary);
+    margin: 0 0 6px;
+    letter-spacing: -0.02em;
+}
+
+.animal-section__desc {
+    font-size: 14px;
+    color: var(--text-sub);
+    margin: 0;
+}
+
+.section-more-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text-primary);
+    text-decoration: none;
+    transition: color 0.2s;
+}
+.section-more-btn:hover { color: var(--orange); }
+.section-more-btn .material-symbols-outlined { font-size: 18px; }
+
+/* 슬라이더 래퍼 */
+.main-animal-slider {
+    position: relative;
+}
+
+.main-slider__viewport {
+    width: 100%;
+    overflow: hidden;
+}
+
+.main-slider__track {
+    display: grid;
+    grid-template-columns: repeat(8, calc(25% - 18px));
+    gap: 24px;
+    transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+/* 슬라이더 아이템 */
+.main-slider__item {
+    min-width: 0;
+}
+
+/* animalList.css의 .animal-grid 오버라이드 방지 */
+.main-slider__track .animal-card {
+    width: 100%;
+}
+
+/* 화살표 버튼: 카드 위에 absolute 오버레이 */
+.main-slider__btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 10;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 1.5px solid var(--border);
+    background: var(--bg-white);
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.12);
+}
+.main-slider__btn--prev { left: -16px; }
+.main-slider__btn--next { right: -16px; }
+.main-slider__btn:hover {
+    background: var(--orange);
+    color: #fff;
+    border-color: var(--orange);
+}
+.main-slider__btn:disabled {
+    opacity: 0.35;
+    cursor: default;
+    pointer-events: none;
+}
+.main-slider__btn .material-symbols-outlined { font-size: 22px; }
+
+@media (max-width: 1100px) {
+    .main-slider__track {
+        grid-template-columns: repeat(8, calc(33.333% - 16px));
+    }
+}
+@media (max-width: 768px) {
+    .main-slider__track {
+        grid-template-columns: repeat(8, calc(50% - 12px));
+    }
+    .animal-section__head { flex-direction: column; align-items: flex-start; gap: 12px; }
+}
+
+/* ══════════════════════════════════════════
+   4. 봉사활동 + 인기글 (벤토 레이아웃)
+══════════════════════════════════════════ */
+.main-content-section {
+    background: var(--bg-white);
+    padding: 60px 0 80px;
+}
+
+/* 3열 그리드: 좌 2fr, 우 1fr */
+.main-bento-layout {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 48px;
+    align-items: stretch;
+}
+
+.main-bento-left,
+.main-bento-right {
+    display: flex;
+    flex-direction: column;
+}
+
+.main-bento-right .popular-board-box {
+    flex: 1;
+}
+
+/* 공통 헤더 */
+.bento-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 24px;
+}
+
+.bento-title {
+    font-size: 26px;
+    font-weight: 900;
+    color: var(--text-primary);
+    margin: 0;
+    letter-spacing: -0.02em;
+}
+
+.bento-more {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-sub);
+    text-decoration: none;
+    transition: color 0.2s;
+}
+.bento-more:hover { color: var(--orange); }
+
+/* ── 봉사활동 카드 (템플릿 스타일) ── */
+.volunteer-bento-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.volunteer-bento-card {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    background: var(--bg-page);
+    border-radius: var(--radius-md);
+    padding: 20px 24px;
+    transition: background 0.2s;
+    text-decoration: none;
+}
+.volunteer-bento-card:hover { background: #fdf0e4; }
+
+.volunteer-bento-card__icon {
+    width: 60px; height: 60px;
+    border-radius: var(--radius-sm);
+    background: rgba(230,126,34,0.1);
+    display: flex; align-items: center; justify-content: center;
+    color: var(--orange);
+    flex-shrink: 0;
+    overflow: hidden;
+}
+.volunteer-bento-card__icon img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+}
+.volunteer-bento-card__icon .material-symbols-outlined { font-size: 28px; }
+
+.volunteer-bento-card__info { flex: 1; min-width: 0; }
+
+.volunteer-bento-card__dday {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    background: #dcfce7;
+    color: #166534;
+    padding: 2px 8px;
+    border-radius: var(--radius-full);
+    margin-bottom: 6px;
+}
+.volunteer-bento-card__dday.closed {
+    background: #f3f4f6;
+    color: var(--text-muted);
+}
+
+.volunteer-bento-card__title {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0 0 4px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.volunteer-bento-card__meta {
+    font-size: 12px;
+    color: var(--text-sub);
+    margin: 0;
+}
+
+.volunteer-bento-card__btn {
+    display: inline-block;
+    background: var(--text-primary);
+    color: #fff;
+    padding: 8px 18px;
+    border-radius: var(--radius-sm);
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: none;
+    flex-shrink: 0;
+    transition: background 0.2s;
+    cursor: pointer;
+    border: none;
+}
+.volunteer-bento-card:hover .volunteer-bento-card__btn { background: var(--orange); }
+.volunteer-bento-card__btn.disabled {
+    background: #e5e7eb;
+    color: var(--text-muted);
+    cursor: default;
+    pointer-events: none;
+}
+.volunteer-bento-card:hover .volunteer-bento-card__btn.disabled { background: #e5e7eb; }
+
+/* 인기글 박스 - 봉사활동과 높이 맞춤 */
+.popular-board-box {
+    background: var(--bg-white);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 28px;
+    box-shadow: 0 2px 12px rgba(31,42,68,0.04);
+    display: flex;
+    flex-direction: column;
+}
+
+.popular-board-list {
+    list-style: none;
+    margin: 0; padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    flex: 1;
+}
+
+.popular-board-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 16px 0;
+    border-bottom: 1px solid #f7f4f0;
+}
+.popular-board-item:last-child {
+    border-bottom: none;
+    padding-bottom: 24px; /* 4번 하단 여유공간 */
+}
+
+.popular-board-item__rank {
+    font-size: 18px;
+    font-weight: 900;
+    color: #d1d5db;
+    width: 28px;
+    flex-shrink: 0;
+    line-height: 1.3;
+}
+.popular-board-item__rank.top { color: var(--orange); }
+
+.popular-board-item__body { flex: 1; min-width: 0; }
+
+.popular-board-item__title {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+    text-decoration: none;
+    margin-bottom: 5px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    transition: color 0.2s;
+}
+.popular-board-item__title:hover { color: var(--orange); }
+
+.popular-board-item__meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    color: var(--text-muted);
+    margin: 0;
+}
+.popular-board-item__meta span {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+}
+.popular-board-item__meta .material-symbols-outlined { font-size: 12px; }
+
+.popular-board-item__type {
+    background: var(--orange-light);
+    color: var(--orange);
+    padding: 1px 7px;
+    border-radius: var(--radius-full);
+    font-size: 10px;
+    font-weight: 700;
+}
+
+/* 실시간 커뮤니티 참여 바 */
+.community-join-bar {
+    margin-top: auto;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+}
+
+.community-join-btn {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--bg-page);
+    border-radius: var(--radius-md);
+    padding: 12px 16px;
+    text-decoration: none;
+    transition: all 0.2s;
+    gap: 8px;
+}
+.community-join-btn:hover {
+    background: var(--orange-light);
+}
+
+.community-join-btn__text {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-sub);
+    flex: 1;
+}
+
+.community-join-btn__count {
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--orange);
+}
+
+.community-join-btn .material-symbols-outlined {
+    font-size: 16px;
+    color: var(--text-muted);
+    transition: transform 0.2s;
+}
+.community-join-btn:hover .material-symbols-outlined {
+    transform: translateX(3px);
+    color: var(--orange);
+}
+
+/* ══════════════════════════════════════════
+   빈 상태
+══════════════════════════════════════════ */
+.list-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    padding: 40px 20px;
+    color: var(--text-muted);
+    font-size: 14px;
+    text-align: center;
+    width: 100%;
+}
+.list-empty .material-symbols-outlined {
+    font-size: 40px;
+    color: #e4dbd6;
+}
+
+/* ══════════════════════════════════════════
+   반응형
+══════════════════════════════════════════ */
+@media (max-width: 1100px) {
+    .animal-grid { grid-template-columns: repeat(3, 1fr); }
+    .main-bento-layout { grid-template-columns: 1fr; gap: 32px; }
+}
+
+@media (max-width: 900px) {
+    .animal-grid { grid-template-columns: repeat(2, 1fr); }
+    .participate-grid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 768px) {
+    .hero-section { height: auto; min-height: 580px; padding: 100px 0 60px; }
+    .hero-title { font-size: 30px; }
+    .hero-stat-ribbon {
+        flex-wrap: wrap;
+        gap: 16px;
+        padding: 16px 20px;
+    }
+    .hero-stat-ribbon__divider { display: none; }
+    .animal-grid { grid-template-columns: repeat(2, 1fr); gap: 14px; }
+    .animal-section__head { flex-direction: column; align-items: flex-start; gap: 12px; }
+    .bento-title { font-size: 20px; }
+    .volunteer-bento-card { flex-wrap: wrap; }
+    .volunteer-bento-card__btn { width: 100%; text-align: center; }
+}
+
+@media (max-width: 480px) {
+    .animal-grid { grid-template-columns: 1fr; }
+}

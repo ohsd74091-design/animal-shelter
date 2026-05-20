@@ -1,0 +1,475 @@
+@charset "UTF-8";
+
+/* ========================================
+   Admin Report Management
+   기존 admin-layout.css 색상 시스템 유지
+   ======================================== */
+
+/* ── 통계 카드 ── */
+.rpt-stat-cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 28px;
+}
+
+.rpt-stat-card {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: #fff;
+    border: 1px solid #e4dbd6;
+    border-radius: 16px;
+    padding: 20px 24px;
+    box-shadow: 0 2px 12px rgba(50,46,43,0.05);
+}
+
+.rpt-stat-card__icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.rpt-stat-card__icon--animal  { background: #fff0e8; color: #9c3f00; }
+.rpt-stat-card__icon--member  { background: #fee2e2; color: #b02500; }
+.rpt-stat-card__icon--pending { background: #fff8e1; color: #7a5400; }
+.rpt-stat-card__icon .material-symbols-outlined { font-size: 24px; }
+
+.rpt-stat-card__label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    color: #7b7672;
+    margin-bottom: 4px;
+}
+
+.rpt-stat-card__value {
+    display: block;
+    font-size: 28px;
+    font-weight: 800;
+    color: #322e2b;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.rpt-stat-card__value--danger { color: #b02500; }
+
+/* ── 탭 ── */
+.rpt-tabs {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #e4dbd6;
+}
+
+.rpt-tab {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 20px;
+    border: none;
+    background: transparent;
+    font-size: 14px;
+    font-weight: 700;
+    color: #7b7672;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -2px;
+    transition: all 0.2s;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.rpt-tab:hover  { color: #9c3f00; }
+.rpt-tab.active { color: #9c3f00; border-bottom-color: #9c3f00; }
+.rpt-tab .material-symbols-outlined { font-size: 18px; }
+
+.rpt-tab-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 20px;
+    height: 20px;
+    padding: 0 6px;
+    background: #b02500;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    border-radius: 999px;
+}
+
+/* ── 탭 콘텐츠 ── */
+.rpt-tab-content { display: none; }
+.rpt-tab-content.active { display: block; }
+
+/* ── 2단 레이아웃 ── */
+.rpt-split {
+    display: grid;
+    grid-template-columns: 38% 1fr;
+    gap: 20px;
+    height: calc(100vh - 340px);
+    min-height: 500px;
+}
+
+/* ── 좌: 목록 패널 ── */
+.rpt-list-panel {
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+    border: 1px solid #e4dbd6;
+    border-radius: 20px;
+    overflow: hidden;
+}
+
+.rpt-list-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    border-bottom: 1px solid #f0ebe4;
+    font-size: 14px;
+    font-weight: 700;
+    color: #322e2b;
+    background: #faf8f5;
+    flex-shrink: 0;
+}
+
+.rpt-filter-btns {
+    display: flex;
+    gap: 4px;
+}
+
+.rpt-filter-btn {
+    padding: 4px 12px;
+    border: 1px solid #e4dbd6;
+    border-radius: 999px;
+    background: #fff;
+    font-size: 12px;
+    font-weight: 600;
+    color: #7b7672;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.rpt-filter-btn:hover  { border-color: #9c3f00; color: #9c3f00; }
+.rpt-filter-btn.active { background: #9c3f00; color: #fff; border-color: #9c3f00; }
+
+.rpt-list {
+    flex: 1;
+    overflow-y: auto;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+/* ── 목록 아이템 ── */
+.rpt-list-item {
+    padding: 14px 16px;
+    border: 1.5px solid #f0ebe4;
+    border-radius: 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: #fff;
+}
+
+.rpt-list-item:hover {
+    border-color: #9c3f00;
+    background: #fff8f0;
+    transform: translateX(2px);
+}
+
+.rpt-list-item.active {
+    border-color: #9c3f00;
+    background: #fff3e8;
+    box-shadow: 0 2px 12px rgba(156,63,0,0.12);
+}
+
+/* 처리완료 아이템 */
+.rpt-list-item--done {
+    opacity: 0.6;
+    background: #f5f5f5;
+}
+
+.rpt-list-item--done:hover { opacity: 0.85; }
+
+.rpt-list-item__top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+}
+
+.rpt-list-item__location {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 13px;
+    font-weight: 700;
+    color: #322e2b;
+    margin: 0 0 4px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.rpt-list-item__location .material-symbols-outlined { font-size: 15px; color: #9c3f00; }
+
+.rpt-list-item__content {
+    font-size: 12px;
+    color: #7b7672;
+    margin: 0 0 8px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.rpt-list-item__meta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    color: #b2aca8;
+}
+
+.rpt-list-item__meta span {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+}
+
+.rpt-list-item__meta .material-symbols-outlined { font-size: 13px; }
+
+.rpt-list-item__status {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 999px;
+}
+
+/* ── 유형/상태 배지 ── */
+.rpt-type-badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.rpt-type-badge--animal { background: #fff0e8; color: #9c3f00; border: 1px solid #f5c18a; }
+.rpt-type-badge--member { background: #fee2e2; color: #b02500; border: 1px solid #fca5a5; }
+
+.rpt-status--pending { background: #fff8e1; color: #7a5400; }
+.rpt-status--done    { background: #e8faf0; color: #22c55e; }
+
+/* ── 빈 목록 ── */
+.rpt-list-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    padding: 40px;
+    color: #b2aca8;
+    font-size: 14px;
+}
+
+.rpt-list-empty .material-symbols-outlined { font-size: 40px; color: #e4dbd6; }
+
+/* ── 우: 상세 패널 ── */
+.rpt-detail-panel {
+    background: #fff;
+    border: 1px solid #e4dbd6;
+    border-radius: 20px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.rpt-detail-empty {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    color: #b2aca8;
+    font-size: 14px;
+}
+
+.rpt-detail-empty .material-symbols-outlined { font-size: 52px; color: #e4dbd6; }
+
+.rpt-detail-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+/* 상세 헤더 */
+.rpt-detail__header {
+    padding-bottom: 20px;
+    border-bottom: 1px solid #f0ebe4;
+}
+
+.rpt-detail__badges {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+.rpt-detail__status-badge {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 999px;
+}
+
+.rpt-detail__title {
+    font-size: 22px;
+    font-weight: 800;
+    color: #322e2b;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    margin: 0 0 6px;
+}
+
+.rpt-detail__date {
+    font-size: 13px;
+    color: #7b7672;
+    margin: 0;
+}
+
+/* 정보 그리드 */
+.rpt-detail__info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.rpt-detail__info-item {
+    background: #faf8f5;
+    border-radius: 12px;
+    padding: 14px 16px;
+}
+
+.rpt-detail__info-label {
+    display: block;
+    font-size: 11px;
+    font-weight: 700;
+    color: #7b7672;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 6px;
+}
+
+.rpt-detail__info-value {
+    font-size: 14px;
+    font-weight: 700;
+    color: #322e2b;
+}
+
+.rpt-detail__info-value--danger { color: #b02500; }
+
+/* 섹션 */
+.rpt-detail__section { display: flex; flex-direction: column; gap: 10px; }
+
+.rpt-detail__section-title {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 700;
+    color: #7b7672;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin: 0;
+}
+
+.rpt-detail__section-title .material-symbols-outlined { font-size: 16px; color: #9c3f00; }
+
+.rpt-detail__desc {
+    font-size: 14px;
+    color: #322e2b;
+    line-height: 1.7;
+    background: #faf8f5;
+    border-radius: 12px;
+    padding: 14px 16px;
+    margin: 0;
+}
+
+/* 첨부 사진 */
+.rpt-detail__img {
+    width: 100%;
+    max-height: 220px;
+    object-fit: cover;
+    border-radius: 14px;
+    border: 1px solid #e4dbd6;
+}
+
+/* 처리 액션 영역 */
+.rpt-detail__action {
+    background: #faf8f5;
+    border-radius: 16px;
+    padding: 20px;
+    border: 1px solid #f0ebe4;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin-top: auto;
+}
+
+.rpt-action-btns {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.rpt-action-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.rpt-action-btn .material-symbols-outlined { font-size: 17px; }
+
+.rpt-action-btn--complete {
+    background: #9c3f00;
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(156,63,0,0.25);
+}
+.rpt-action-btn--complete:hover {
+    background: #7a3000;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(156,63,0,0.35);
+}
+
+.rpt-action-btn--warn {
+    background: #fff8e1;
+    color: #7a5400;
+    border: 1.5px solid #fbb423;
+}
+.rpt-action-btn--warn:hover { background: #fbb423; color: #fff; border-color: #fbb423; }
+
+.rpt-action-btn--reject {
+    background: #f5f5f5;
+    color: #7b7672;
+}
+.rpt-action-btn--reject:hover { background: #fee2e2; color: #b02500; }
+
+/* ── 반응형 ── */
+@media (max-width: 1200px) {
+    .rpt-stat-cards { grid-template-columns: repeat(2, 1fr); }
+    .rpt-split { grid-template-columns: 1fr; height: auto; }
+}

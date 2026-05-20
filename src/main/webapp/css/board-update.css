@@ -1,0 +1,108 @@
+@charset "UTF-8";
+
+.update-page {
+    width: 100%;
+    background-color: #f8f7f4;
+    padding: 60px 0 100px;
+    min-height: 700px;
+}
+
+.update-inner {
+    width: 1100px;
+    margin: 0 auto;
+}
+
+.back-link {
+    margin-bottom: 25px;
+}
+
+.back-link a {
+    text-decoration: none;
+    color: #888;
+    font-size: 16px;
+}
+
+.update-page-title {
+    font-size: 52px;
+    font-weight: 800;
+    color: #111;
+    margin-bottom: 15px;
+}
+
+.update-page-sub {
+    font-size: 20px;
+    color: #8b8f97;
+    margin-bottom: 40px;
+}
+
+.update-box {
+    background-color: #fff;
+    border: 1px solid #eee;
+    border-radius: 20px;
+    padding: 35px;
+}
+
+.update-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.update-table th,
+.update-table td {
+    padding: 18px 10px;
+    border-bottom: 1px solid #eee;
+    text-align: left;
+    vertical-align: top;
+}
+
+.update-table th {
+    width: 180px;
+    font-size: 16px;
+    color: #333;
+}
+
+.update-table input[type="text"],
+.update-table select,
+.update-table textarea {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 14px;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    font-size: 15px;
+    font-family: 'Public Sans', sans-serif;
+}
+
+.update-table textarea {
+    resize: none;
+}
+
+.update-btn-area {
+    margin-top: 35px;
+    display: flex;
+    gap: 14px;
+}
+
+.update-btn {
+    display: inline-block;
+    min-width: 130px;
+    height: 50px;
+    line-height: 50px;
+    text-align: center;
+    border-radius: 28px;
+    text-decoration: none;
+    font-size: 16px;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+}
+
+.orange-btn {
+    background-color: #f39a2d;
+    color: #fff;
+}
+
+.gray-btn {
+    background-color: #f2f2f2;
+    color: #444;
+}

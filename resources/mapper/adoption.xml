@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="adoption">
+
+    <!-- ===================== ResultMap ===================== -->
+    <resultMap type="AdoptionVO" id="adoptionMap">
+        <id     column="ADOPTION_ID"    property="adoptionId"/>
+        <result column="MEMBER_ID"      property="memberId"/>
+        <result column="ANIMAL_ID"      property="animalId"/>
+        <result column="VISIT_DATE"     property="visitDate"/>
+        <result column="APPLY_DATE"     property="applyDate"/>
+        <result column="STATUS"         property="status"/>
+        <result column="REJECT_REASON"  property="rejectReason"/>
+        <!-- JOIN: animal 요약 -->
+        <result column="ANIMAL_NAME"    property="animalName"/>
+        <result column="ANIMAL_TYPE"    property="animalType"/>
+        <result column="BREED"          property="breed"/>
+        <result column="AGE"            property="age"/>
+        <result column="MAIN_IMAGE"     property="mainImage"/>
+        <!-- 1:1 상세 정보 -->
+        <association property="detail" javaType="AdoptionDetailVO">
+            <id     column="ADOPTION_ID"     property="adoptionId"/>
+            <result column="JOB"             property="job"/>
+            <result column="HOUSING_TYPE"    property="housingType"/>
+            <result column="PET_EXPERIENCE"  property="petExperience"/>
+            <result column="ADDRESS"         property="address"/>
+            <result column="ADOPTION_REASON" property="adoptionReason"/>
+        </association>
+    </resultMap>
+
+    <!-- ===================== 중복 신청 확인 ===================== -->
+    <!-- 동일 회원이 동일 동물에 '심사중' 또는 '승인' 상태로 이미 신청했는지 확인 -->
+    <select id="checkDuplicateAdoption" parameterType="map" resultType="int">
+        SELECT COUNT(*)
+        FROM ADOPTION
+        WHERE ANIMAL_ID = #{animalId}
+          AND MEMBER_ID = #{memberId}
+          AND STATUS    IN ('심사중', '승인')
+    </select>
+    
+    <!-- 반려 이력 확인 -->
+    <select id="checkRejectedAdoption" parameterType="map" resultType="int">
+        SELECT COUNT(*)
+        FROM ADOPTION
+        WHERE ANIMAL_ID = #{animalId}
+          AND MEMBER_ID = #{memberId}
+          AND STATUS    = '반려'
+    </select>
+
+    <!-- 반려 사유 조회 (가장 최근) -->
+    <select id="getRejectReason" parameterType="map" resultType="String">
+        SELECT REJECT_REASON
+        FROM ADOPTION
+        WHERE ANIMAL_ID = #{animalId}
+          AND MEMBER_ID = #{memberId}
+          AND STATUS    = '반려'
+        ORDER BY APPLY_DATE DESC
+        FETCH FIRST 1 ROWS ONLY
+    </select>
+
+    <!-- ===================== 입양 신청 INSERT ===================== -->
+    <!-- 1단계: ADOPTION 기본 정보 INSERT + 시퀀스로 PK 획득 -->
+    <insert id="insertAdoption" parameterType="AdoptionVO">
+        <selectKey keyProperty="adoptionId" resultType="int" order="BEFORE">
+            SELECT SEQ_ADOPTION.NEXTVAL FROM DUAL
+        </selectKey>
+        INSERT INTO ADOPTION (
+            ADOPTION_ID,
+            MEMBER_ID,
+            ANIMAL_ID,
+            VISIT_DATE,
+            APPLY_DATE,
+            STATUS
+        ) VALUES (
+            #{adoptionId},
+            #{memberId},
+            #{animalId},
+            #{visitDate, jdbcType=DATE},
+            SYSDATE,
+            '심사중'
+        )
+    </insert>
+
+    <!-- 2단계: ADOPTION_DETAIL 상세 정보 INSERT (adoptionId는 1단계에서 획득) -->
+    <insert id="insertAdoptionDetail" parameterType="AdoptionDetailVO">
+        INSERT INTO ADOPTION_DETAIL (
+            ADOPTION_ID,
+            JOB,
+            HOUSING_TYPE,
+            PET_EXPERIENCE,
+            ADDRESS,
+            ADOPTION_REASON
+        ) VALUES (
+            #{adoptionId},
+            #{job,             jdbcType=VARCHAR},
+            #{housingType,     jdbcType=VARCHAR},
+            #{petExperience,   jdbcType=VARCHAR},
+            #{address,         jdbcType=CLOB},
+            #{adoptionReason,  jdbcType=CLOB}
+        )
+    </insert>
+
+    <!-- ===================== 단건 조회 (상세 + 동물정보 JOIN) ===================== -->
+    <select id="selectAdoption" parameterType="int" resultMap="adoptionMap">
+        SELECT
+            AD.ADOPTION_ID,
+            AD.MEMBER_ID,
+            AD.ANIMAL_ID,
+            AD.VISIT_DATE,
+            AD.APPLY_DATE,
+            AD.STATUS,
+            AD.REJECT_REASON,
+            A.ANIMAL_NAME,
+            A.ANIMAL_TYPE,
+            A.BREED,
+            A.AGE,
+            I.SAVE_FILE_NAME  AS MAIN_IMAGE,
+            DT.JOB,
+            DT.HOUSING_TYPE,
+            DT.PET_EXPERIENCE,
+            DT.ADDRESS,
+            DT.ADOPTION_REASON
+        FROM ADOPTION AD
+        JOIN ANIMAL A
+          ON AD.ANIMAL_ID = A.ANIMAL_ID
+        LEFT JOIN ANIMAL_IMAGE I
+          ON A.ANIMAL_ID = I.ANIMAL_ID
+         AND I.IS_MAIN = 'Y'
+        LEFT JOIN ADOPTION_DETAIL DT
+          ON AD.ADOPTION_ID = DT.ADOPTION_ID
+        WHERE AD.ADOPTION_ID = #{adoptionId}
+    </select>
+
+    <!-- ===================== 회원 본인 신청 목록 ===================== -->
+    <select id="selectAdoptionListByMember" parameterType="String" resultMap="adoptionMap">
+        SELECT
+            AD.ADOPTION_ID,
+            AD.ANIMAL_ID,
+            AD.VISIT_DATE,
+            AD.APPLY_DATE,
+            AD.STATUS,
+            A.ANIMAL_NAME,
+            A.ANIMAL_TYPE,
+            A.BREED,
+            A.AGE,
+            I.SAVE_FILE_NAME AS MAIN_IMAGE
+        FROM ADOPTION AD
+        JOIN ANIMAL A
+          ON AD.ANIMAL_ID = A.ANIMAL_ID
+        LEFT JOIN ANIMAL_IMAGE I
+          ON A.ANIMAL_ID = I.ANIMAL_ID
+         AND I.IS_MAIN = 'Y'
+        WHERE AD.MEMBER_ID = #{memberId}
+        ORDER BY AD.APPLY_DATE DESC
+    </select>
+
+</mapper>

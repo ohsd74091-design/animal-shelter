@@ -1,0 +1,399 @@
+/* =====================================================
+   mypageAdoptionHistory.css
+   입양 신청 내역 페이지 전용 스타일
+   - 공통: common.css / 사이드바 등: mypage.css 참조
+   ===================================================== */
+
+/* --------------------------------------------------
+   페이지 헤더
+-------------------------------------------------- */
+.page-header {
+    margin-bottom: 1.5rem;
+}
+
+.page-title {
+    font-size: 1.875rem;
+    font-weight: 900;
+    color: #0d1117;
+    margin: 0 0 0.4rem;
+}
+
+.page-desc {
+    font-size: 0.9rem;
+    color: #64748b;
+    margin: 0;
+}
+
+
+/* --------------------------------------------------
+   탭 바
+-------------------------------------------------- */
+.tab-bar {
+    display: flex;
+    gap: 0;
+    border-bottom: 1px solid #e2e8f0;
+    margin-bottom: 1.5rem;
+}
+
+.tab-item {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.75rem 1.25rem;
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: #64748b;
+    text-decoration: none;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    transition: color 0.15s, border-color 0.15s;
+}
+
+.tab-item:hover {
+    color: #374151;
+}
+
+.tab-item.active {
+    color: #ec5b13;
+    border-bottom-color: #ec5b13;
+}
+
+
+/* --------------------------------------------------
+   신청 목록
+-------------------------------------------------- */
+.adoption-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+
+/* --------------------------------------------------
+   신청 아이템 카드
+-------------------------------------------------- */
+.adoption-item {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.75rem;
+    padding: 1.25rem;
+    transition: box-shadow 0.2s, opacity 0.2s;
+}
+
+.adoption-item:hover {
+    box-shadow: 0 4px 16px rgba(0,0,0,.08);
+}
+
+/* 반려 상태: 흐리게 처리 */
+.adoption-item.is-rejected {
+    opacity: 0.8;
+}
+
+.adoption-item.is-rejected:hover {
+    opacity: 1;
+}
+
+
+/* 이미지 */
+.adoption-item__img-wrap {
+    width: 6rem;
+    height: 6rem;
+    border-radius: 0.75rem;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.adoption-item__img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.adoption-item__img.grayscale {
+    filter: grayscale(100%);
+}
+
+
+/* 본문 */
+.adoption-item__body {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+}
+
+.adoption-item__top {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.adoption-item__no {
+    font-size: 0.75rem;
+    color: #94a3b8;
+}
+
+.adoption-item__name {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #111;
+    margin: 0;
+}
+
+.adoption-item__meta {
+    font-size: 0.85rem;
+    color: #64748b;
+    margin: 0;
+}
+
+.adoption-item__date {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: 0.75rem;
+    color: #94a3b8;
+    margin-top: 0.35rem;
+}
+
+.adoption-item__date .material-symbols-outlined {
+    font-size: 0.875rem;
+}
+
+.adoption-item__reject-reason {
+    font-size: 0.75rem;
+    color: #e12626;
+    margin: 0.25rem 0 0;
+    font-weight: 600;
+}
+
+
+/* --------------------------------------------------
+   상태 뱃지
+-------------------------------------------------- */
+.status-badge {
+    display: inline-block;
+    padding: 0.2rem 0.6rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+/* 심사중 */
+.status-badge--심사중 {
+    background: #dbeafe;
+    color: #2563eb;
+}
+
+/* 승인 */
+.status-badge--승인 {
+    background: #dcfce7;
+    color: #16a34a;
+}
+
+/* 반려 */
+.status-badge--반려 {
+    background: #fee2e2;
+    color: #dc2626;
+}
+
+
+/* --------------------------------------------------
+   액션 버튼 영역
+-------------------------------------------------- */
+.adoption-item__actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    min-width: 8rem;
+    flex-shrink: 0;
+}
+
+/* 상세보기 버튼 */
+.btn-detail {
+    display: block;
+    width: 100%;
+    padding: 0.65rem 0;
+    text-align: center;
+    background: #f1f5f9;
+    color: #374151;
+    font-size: 0.875rem;
+    font-weight: 700;
+    border-radius: 0.75rem;
+    text-decoration: none;
+    transition: background 0.2s;
+}
+
+.btn-detail:hover {
+    background: #e2e8f0;
+}
+
+/* 신청 취소 버튼 */
+.btn-cancel {
+    display: block;
+    width: 100%;
+    padding: 0.4rem 0;
+    text-align: center;
+    background: none;
+    border: none;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: #94a3b8;
+    cursor: pointer;
+    transition: color 0.2s;
+    font-family: inherit;
+}
+
+.btn-cancel:hover {
+    color: #ef4444;
+}
+
+/* 승인서 발급 버튼 */
+.btn-cert {
+    display: block;
+    width: 100%;
+    padding: 0.65rem 0;
+    text-align: center;
+    background: #fff7ed;
+    color: #ec5b13;
+    font-size: 0.875rem;
+    font-weight: 700;
+    border-radius: 0.75rem;
+    text-decoration: none;
+    border: 1px solid #fed7aa;
+    transition: background 0.2s, border-color 0.2s;
+    margin-top: 0.5rem;
+}
+
+.btn-cert:hover {
+    background: #ffedd5;
+    border-color: #ec5b13;
+}
+
+
+/* --------------------------------------------------
+   페이지네이션 (mypageFavAnimal.css 와 동일 구조)
+-------------------------------------------------- */
+.pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    margin-top: 2rem;
+}
+
+.page-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 0.6rem;
+    border: 1px solid #e2e8f0;
+    background: #fff;
+    color: #475569;
+    font-size: 0.9rem;
+    font-weight: 500;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+}
+
+.page-btn:hover:not(:disabled):not(.page-btn--active) {
+    background: rgba(236, 91, 19, 0.06);
+    color: #ec5b13;
+}
+
+.page-btn--active {
+    background: #ec5b13;
+    color: #fff;
+    border-color: #ec5b13;
+    font-weight: 700;
+    box-shadow: 0 2px 8px rgba(236,91,19,.25);
+    cursor: default;
+}
+
+.page-btn--arrow {
+    color: #94a3b8;
+}
+
+.page-btn--arrow:not(:disabled):hover {
+    color: #ec5b13;
+}
+
+.page-btn--arrow:disabled {
+    color: #cbd5e1;
+    border-color: #f1f5f9;
+    background: #f8fafc;
+    cursor: not-allowed;
+}
+
+.page-btn .material-symbols-outlined {
+    font-size: 1.2rem;
+}
+
+
+/* --------------------------------------------------
+   신청 내역 없을 때 (Empty State)
+-------------------------------------------------- */
+.adoption-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 5rem 2rem;
+    text-align: center;
+    gap: 1rem;
+}
+
+.adoption-empty__icon {
+    font-size: 4rem;
+    color: #cbd5e1;
+}
+
+.adoption-empty__msg {
+    font-size: 1.05rem;
+    color: #94a3b8;
+    margin: 0;
+}
+
+.adoption-empty__btn {
+    display: inline-block;
+    margin-top: 0.5rem;
+    padding: 0.7rem 1.6rem;
+    background: #ec5b13;
+    color: #fff;
+    border-radius: 9999px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-decoration: none;
+    transition: background 0.2s;
+}
+
+.adoption-empty__btn:hover {
+    background: #d44e0e;
+}
+
+
+/* --------------------------------------------------
+   반응형
+-------------------------------------------------- */
+@media (max-width: 640px) {
+    .adoption-item {
+        flex-wrap: wrap;
+    }
+
+    .adoption-item__actions {
+        width: 100%;
+        flex-direction: row;
+    }
+
+    .btn-adopt-process,
+    .btn-detail {
+        flex: 1;
+    }
+}

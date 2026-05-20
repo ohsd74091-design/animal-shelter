@@ -1,0 +1,301 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--
+    [실제 DONATION 테이블 컬럼]
+    1  DONATION_ID      NUMBER         PK (SEQ_DONATION.NEXTVAL)
+    2  MEMBER_ID        VARCHAR2(50)
+    3  DONATION_AMOUNT  NUMBER
+    4  DONATION_DATE    DATE           DEFAULT SYSDATE
+    5  DONATION_METHOD  VARCHAR2(20)   (계좌이체 / 카드결제)
+    6  PAYMENT_TYPE     VARCHAR2(20)   (정기 / 일시)
+    7  DONATOR_NAME     VARCHAR2(100)
+    8  DONATOR_TEL      VARCHAR2(20)
+    9 DONATOR_EMAIL    VARCHAR2(100)
+    10 RECEIPT_YN       CHAR(1)        DEFAULT 'N'
+    11 REG_NO1          VARCHAR2(10)  
+    12 REG_NO2          VARCHAR2(100)
+-->
+
+<mapper namespace="donation">
+
+    <!-- ===== 후원 등록 ===== -->
+    <insert id="insertDonation" parameterType="DonationVO">
+        <selectKey keyProperty="donationId" resultType="int" order="BEFORE">
+            SELECT SEQ_DONATION.NEXTVAL FROM DUAL
+        </selectKey>
+        INSERT INTO DONATION (
+            DONATION_ID,
+            MEMBER_ID,
+            DONATION_AMOUNT,
+            DONATION_DATE,
+            DONATION_METHOD,
+            PAYMENT_TYPE,
+            DONATOR_NAME,
+            DONATOR_TEL,
+            DONATOR_EMAIL,
+            RECEIPT_YN,
+            REG_NO1,
+            REG_NO2
+        ) VALUES (
+            #{donationId},
+            #{memberId,       jdbcType=VARCHAR},
+            #{donationAmount},
+            SYSDATE,
+            #{donationMethod},
+            #{donationType},
+            #{donatorName,    jdbcType=VARCHAR},
+            #{donatorTel,     jdbcType=VARCHAR},
+            #{donatorEmail,   jdbcType=VARCHAR},
+            #{receiptYn,      jdbcType=VARCHAR},
+            #{regNo1,         jdbcType=VARCHAR},
+            #{regNo2,         jdbcType=VARCHAR}
+        )
+    </insert>
+    
+    <!--SELECT — 사용자용 -->
+    <!-- ===== 내 후원 목록 (마이페이지용) ===== -->
+    <select id="selectMyDonationList" parameterType="String" resultType="DonationVO">
+        SELECT
+            DONATION_ID     AS donationId,
+            MEMBER_ID       AS memberId,
+            DONATION_AMOUNT AS donationAmount,
+            DONATION_DATE   AS createDate,
+            DONATION_METHOD AS donationMethod,
+            PAYMENT_TYPE    AS donationType,
+            DONATOR_NAME    AS donatorName,
+            RECEIPT_YN      AS receiptYn
+        FROM DONATION
+        WHERE MEMBER_ID = #{memberId}
+        ORDER BY DONATION_DATE DESC
+    </select>
+
+    <!-- ===== 영수증 단건 조회 (PDF 다운로드용) ===== -->
+    <select id="selectDonationForReceipt" resultType="DonationVO">
+        SELECT
+            DONATION_ID     AS donationId,
+            MEMBER_ID       AS memberId,
+            DONATION_AMOUNT AS donationAmount,
+            DONATION_DATE   AS createDate,
+            PAYMENT_TYPE    AS donationType,
+            DONATOR_NAME    AS donatorName,
+            DONATOR_TEL     AS donatorTel,
+            DONATOR_EMAIL   AS donatorEmail,
+            RECEIPT_YN      AS receiptYn,
+            REG_NO1         AS regNo1
+        FROM DONATION
+        WHERE DONATION_ID = #{donationId}
+          AND MEMBER_ID   = #{memberId}
+          AND RECEIPT_YN  IN ('Y', 'I')
+    </select>
+
+    
+<!-- ═══════════════════════════════════════
+     SELECT — 관리자용
+═══════════════════════════════════════ -->
+ 
+    <!--
+        관리자 전체 후원 목록
+        - 검색(기부자명 / 회원ID), 결제수단 필터, 기간 필터 지원
+        - 페이징: Oracle ROWNUM 방식
+        - parameterType: AdminDonationSearchVO (아래 주석 참고)
+ 
+        필요한 VO 필드:
+            String  keyword      — 검색어 (기부자명 or 회원ID)
+            String  method       — 결제수단 필터 (null or 계좌이체 / 카드결제)
+            String  paymentType  — 후원유형 필터 (null or 정기 / 일시)
+            String  startDate    — 기간 시작 (YYYY-MM-DD, nullable)
+            String  endDate      — 기간 끝   (YYYY-MM-DD, nullable)
+            int     startRow     — 페이징 시작 행
+            int     endRow       — 페이징 끝 행
+    -->
+	
+	 <select id="selectAdminDonationList" parameterType="PageVO" resultType="DonationVO">
+        SELECT * FROM (
+            SELECT ROWNUM AS rn, A.* FROM (
+                SELECT
+                    DONATION_ID     AS donationId,
+                    MEMBER_ID       AS memberId,
+                    DONATION_AMOUNT AS donationAmount,
+                    TO_CHAR(DONATION_DATE, 'YYYY.MM.DD') AS donationDateStr,
+                    DONATION_DATE   AS createDate,
+                    DONATION_METHOD AS donationMethod,
+                    PAYMENT_TYPE    AS donationType,
+                    DONATOR_NAME    AS donatorName,
+                    DONATOR_TEL     AS donatorTel,
+                    DONATOR_EMAIL   AS donatorEmail,
+                    RECEIPT_YN      AS receiptYn
+                FROM DONATION
+                WHERE 1=1
+                <if test="keyword != null and keyword != ''">
+                    AND (
+                        DONATOR_NAME LIKE '%' || #{keyword} || '%'
+                        OR MEMBER_ID LIKE '%' || #{keyword} || '%'
+                    )
+                </if>
+                <if test="method != null and method != ''">
+                    AND DONATION_METHOD = #{method}
+                </if>
+                <if test="paymentType != null and paymentType != ''">
+                    AND PAYMENT_TYPE = #{paymentType}
+                </if>
+                <if test="startDate != null and startDate != ''">
+                    AND DONATION_DATE &gt;= TO_DATE(#{startDate}, 'YYYY-MM-DD')
+                </if>
+                <if test="endDate != null and endDate != ''">
+                    AND DONATION_DATE &lt; TO_DATE(#{endDate}, 'YYYY-MM-DD') + 1
+                </if>
+                ORDER BY DONATION_DATE DESC, DONATION_ID DESC
+            ) A
+            WHERE ROWNUM &lt;= #{endRow}
+        )
+        WHERE rn &gt;= #{startRow}
+    </select>
+ 
+    <!-- 관리자 전체 후원 건수 (페이징 계산용) -->
+    <select id="selectAdminDonationCount" parameterType="PageVO" resultType="int">
+        SELECT COUNT(*)
+        FROM DONATION
+        WHERE 1=1
+        <if test="keyword != null and keyword != ''">
+            AND (
+                DONATOR_NAME LIKE '%' || #{keyword} || '%'
+                OR MEMBER_ID LIKE '%' || #{keyword} || '%'
+            )
+        </if>
+        <if test="method != null and method != ''">
+            AND DONATION_METHOD = #{method}
+        </if>
+        <if test="paymentType != null and paymentType != ''">
+            AND PAYMENT_TYPE = #{paymentType}
+        </if>
+        <if test="startDate != null and startDate != ''">
+            AND DONATION_DATE &gt;= TO_DATE(#{startDate}, 'YYYY-MM-DD')
+        </if>
+        <if test="endDate != null and endDate != ''">
+            AND DONATION_DATE &lt; TO_DATE(#{endDate}, 'YYYY-MM-DD') + 1
+        </if>
+    </select>
+ 
+    <!-- 관리자 통계 요약 (stat 카드 4개용) -->
+    <select id="selectDonationStats" resultType="map">
+        SELECT
+            NVL(SUM(DONATION_AMOUNT), 0)                        AS totalAmount,
+            COUNT(*)                                            AS totalCount,
+            COUNT(CASE WHEN TRUNC(DONATION_DATE, 'MM')
+                            = TRUNC(SYSDATE, 'MM') THEN 1 END) AS thisMonthCount,
+            COUNT(CASE WHEN RECEIPT_YN = 'Y' THEN 1 END)       AS receiptCount
+        FROM DONATION
+    </select>
+ 
+    <!-- 영수증 신청 목록 (관리자 영수증 관리 탭) -->
+    <select id="selectReceiptList" resultType="DonationVO">
+        SELECT
+            DONATION_ID     AS donationId,
+            MEMBER_ID       AS memberId,
+            DONATION_AMOUNT AS donationAmount,
+            DONATION_DATE   AS createDate,
+            DONATOR_NAME    AS donatorName,
+            REG_NO1         AS regNo1,
+            RECEIPT_YN      AS receiptYn
+        FROM DONATION
+        WHERE RECEIPT_YN IN ('Y', 'I')
+        ORDER BY DONATION_DATE DESC, DONATION_ID DESC
+    </select>
+ 
+    <!-- 엑셀 다운로드용 — 필터 적용, 페이징 없이 전체 조회 -->
+    <select id="selectAdminDonationListAll" parameterType="PageVO" resultType="DonationVO">
+        SELECT
+            DONATION_ID     AS donationId,
+            MEMBER_ID       AS memberId,
+            DONATION_AMOUNT AS donationAmount,
+            TO_CHAR(DONATION_DATE, 'YYYY.MM.DD') AS donationDateStr,
+            DONATION_DATE   AS createDate,
+            DONATION_METHOD AS donationMethod,
+            PAYMENT_TYPE    AS donationType,
+            DONATOR_NAME    AS donatorName,
+            DONATOR_TEL     AS donatorTel,
+            DONATOR_EMAIL   AS donatorEmail,
+            RECEIPT_YN      AS receiptYn
+        FROM DONATION
+        WHERE 1=1
+        <if test="keyword != null and keyword != ''">
+            AND (
+                DONATOR_NAME LIKE '%' || #{keyword} || '%'
+                OR MEMBER_ID LIKE '%' || #{keyword} || '%'
+            )
+        </if>
+        <if test="method != null and method != ''">
+            AND DONATION_METHOD = #{method}
+        </if>
+        <if test="paymentType != null and paymentType != ''">
+            AND PAYMENT_TYPE = #{paymentType}
+        </if>
+        <if test="startDate != null and startDate != ''">
+            AND DONATION_DATE &gt;= TO_DATE(#{startDate}, 'YYYY-MM-DD')
+        </if>
+        <if test="endDate != null and endDate != ''">
+            AND DONATION_DATE &lt; TO_DATE(#{endDate}, 'YYYY-MM-DD') + 1
+        </if>
+        ORDER BY DONATION_DATE DESC, DONATION_ID DESC
+    </select>
+ 
+    <!-- 이달의 우수 기부자 TOP 5 (랭킹 카드용) -->
+    <select id="selectTopDonorList" resultType="PageVO">
+        SELECT *
+        FROM (
+            SELECT
+                MEMBER_ID       AS memberId,
+                DONATOR_NAME    AS donatorName,
+                SUM(DONATION_AMOUNT) AS totalAmount,
+                COUNT(*)        AS donationCount
+            FROM DONATION
+            WHERE TRUNC(DONATION_DATE, 'MM') = TRUNC(SYSDATE, 'MM')
+            GROUP BY MEMBER_ID, DONATOR_NAME
+            ORDER BY SUM(DONATION_AMOUNT) DESC
+        )
+        WHERE ROWNUM &lt;= 5
+    </select>
+ 
+ 
+<!-- ═══════════════════════════════════════
+     UPDATE — 관리자용
+═══════════════════════════════════════ -->
+    <!-- 후원 상태 수동 업데이트 (관리자 수정 모달용) -->
+    <update id="updateDonationByAdmin" parameterType="DonationVO">
+        UPDATE DONATION
+        SET
+            DONATOR_NAME    = #{donatorName,   jdbcType=VARCHAR},
+            DONATION_AMOUNT = #{donationAmount},
+            PAYMENT_TYPE    = #{donationType},
+            DONATION_METHOD = #{donationMethod}
+        WHERE DONATION_ID = #{donationId}
+    </update>
+ 
+ 
+<!-- ═══════════════════════════════════════
+     DELETE — 관리자용
+═══════════════════════════════════════ -->
+ 
+    <!-- 후원 내역 삭제 (관리자) -->
+    <delete id="deleteDonation" parameterType="int">
+        DELETE FROM DONATION
+        WHERE DONATION_ID = #{donationId}
+    </delete>
+    
+    <update id="updateReceiptStatus" parameterType="DonationVO">
+	    UPDATE DONATION
+	    SET RECEIPT_YN = #{receiptYn}
+	    WHERE DONATION_ID = #{donationId}
+	</update>
+
+    <!-- ===== 후원 완료시 member 테이블의 is_donor를 y로 업데이트 ===== -->
+    <update id="updateMemberDonorYn" parameterType="String"> 
+    	UPDATE MEMBER
+    	SET IS_DONOR ='Y'
+    	WHERE MEMBER_ID = #{memberId}
+    </update>
+    
+
+</mapper>

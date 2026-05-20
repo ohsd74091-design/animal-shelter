@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="adminSearch">
+
+    <!-- 동물 자동완성 -->
+    <select id="selectAnimalSuggest" parameterType="string"
+            resultType="kr.or.ddit.admin.search.vo.AdminSearchItemVO">
+        SELECT
+            TO_CHAR(A.ANIMAL_ID) AS id,
+            A.ANIMAL_NAME AS title,
+            A.BREED AS subText,
+            I.SAVE_FILE_NAME AS imageName
+        FROM ANIMAL A
+        LEFT JOIN ANIMAL_IMAGE I
+          ON A.ANIMAL_ID = I.ANIMAL_ID
+         AND I.IS_MAIN = 'Y'
+        WHERE A.ANIMAL_NAME LIKE '%' || #{keyword} || '%'
+        ORDER BY A.ANIMAL_NAME
+        FETCH FIRST 5 ROWS ONLY
+    </select>
+
+    <!-- 회원 자동완성 -->
+    <select id="selectMemberSuggest" parameterType="string"
+            resultType="kr.or.ddit.admin.search.vo.AdminSearchItemVO">
+        SELECT
+            MEMBER_ID AS id,
+            NICKNAME AS title,
+            EMAIL AS subText,
+            PROFILE_IMG AS imageName
+        FROM MEMBER
+        WHERE NICKNAME LIKE '%' || #{keyword} || '%'
+        ORDER BY NICKNAME
+        FETCH FIRST 5 ROWS ONLY
+    </select>
+
+    <!-- 문의 자동완성 -->
+    <select id="selectSupportSuggest" parameterType="string"
+            resultType="kr.or.ddit.admin.search.vo.AdminSearchItemVO">
+        SELECT
+            TO_CHAR(SUPPORT_ID) AS id,
+            TITLE AS title,
+            MEMBER_ID AS subText,
+            NULL AS imageName
+        FROM SUPPORT
+        WHERE TITLE LIKE '%' || #{keyword} || '%'
+        ORDER BY CREATE_DATE DESC
+        FETCH FIRST 5 ROWS ONLY
+    </select>
+
+    <!-- 특정 동물이 목록의 몇 페이지에 있는지 계산 -->
+   <select id="selectAnimalPageByAnimalId" parameterType="map" resultType="int">
+    SELECT CEIL(RN / #{countPerPage})
+    FROM (
+        SELECT
+            A.ANIMAL_ID,
+            ROW_NUMBER() OVER (
+                ORDER BY A.CREATE_DATE DESC, A.ANIMAL_ID DESC
+            ) AS RN
+        FROM ANIMAL A
+    )
+    WHERE ANIMAL_ID = #{animalId}
+</select>
+
+</mapper>

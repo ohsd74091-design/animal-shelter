@@ -1,0 +1,547 @@
+@charset "UTF-8";
+
+/* ========================================
+   Board List Page
+   ======================================== */
+.board-page {
+    width: 100%;
+    background-color: #f8f7f4;
+    padding: 50px 0 100px;
+    min-height: 700px;
+}
+
+.board-inner {
+    width: 1200px;
+    margin: 0 auto;
+}
+
+.board-page .page-title {
+    font-size: 2rem;
+    font-weight: 800;
+    color: #111;
+    margin-bottom: 15px;
+}
+
+.board-page .page-sub {
+    font-size: 1rem;
+    color: #8b8f97;
+    margin-bottom: 40px;
+}
+
+/* ========================================
+   레이아웃: 테이블 + 사이드바
+   ======================================== */
+.board-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 220px;
+    gap: 28px;
+    align-items: start;
+}
+
+.board-main {
+    min-width: 0;
+}
+
+.board-sidebar {
+    width: 220px;
+}
+
+/* ========================================
+   카테고리 + 검색
+   ======================================== */
+.board-search-wrap {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.category-wrap {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.category-btn {
+    display: inline-block;
+    padding: 7px 16px;
+    border-radius: 999px;
+    border: 1px solid #ddd;
+    background: #fff;
+    color: #555;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.2s;
+    white-space: nowrap;
+}
+
+.category-btn:hover {
+    border-color: #f39a2d;
+    color: #f39a2d;
+}
+
+.category-btn.active {
+    background: #f39a2d;
+    color: #fff;
+    border-color: #f39a2d;
+}
+
+.search-box {
+    display: flex;
+    align-items: center;
+    border: 1px solid #ddd;
+    border-radius: 999px;
+    overflow: hidden;
+    background: #fff;
+    height: 38px;
+}
+
+.search-box input[type="text"] {
+    border: none;
+    outline: none;
+    padding: 0 14px;
+    font-size: 13px;
+    width: 180px;
+    background: transparent;
+}
+
+.search-box button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    color: #888;
+    transition: color 0.2s;
+}
+
+.search-box button:hover {
+    color: #f39a2d;
+}
+
+.search-box button .material-symbols-outlined {
+    font-size: 18px;
+}
+
+/* ========================================
+   게시글 테이블
+   ======================================== */
+.board-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid #eee;
+    table-layout: fixed;
+}
+
+.board-table th,
+.board-table td {
+    box-sizing: border-box;
+}
+
+.board-table thead tr {
+    background-color: #faf8f5;
+    border-bottom: 1px solid #eee;
+}
+
+.board-table th {
+    padding: 13px 12px;
+    font-size: 12px;
+    font-weight: 700;
+    color: #666;
+    text-align: center;
+}
+
+.board-table td {
+    padding: 13px 12px;
+    font-size: 13px;
+    color: #333;
+    text-align: center;
+    border-bottom: 1px solid #f5f2ee;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.board-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.board-table tbody tr:hover {
+    background-color: #fdfaf7;
+}
+
+.title-td {
+    text-align: left !important;
+}
+
+.title-td a {
+    color: #222;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 14px;
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    transition: color 0.2s;
+}
+
+.title-td a:hover {
+    color: #f39a2d;
+}
+
+.empty-row {
+    text-align: center !important;
+    padding: 50px !important;
+    color: #aaa;
+}
+
+.type-badge {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 700;
+    background: #fff2e3;
+    color: #f39a2d;
+    border: 1px solid #f5c98a;
+    white-space: nowrap;
+}
+
+.type-공지 {
+    background: #e8f0fe;
+    color: #4f6aff;
+    border-color: #c7d2fe;
+}
+
+.type-자유 {
+    background: #fff2e3;
+    color: #f39a2d;
+    border-color: #f5c98a;
+}
+
+.type-입양후기 {
+    background: #e8faf0;
+    color: #22c55e;
+    border-color: #a7f3d0;
+}
+
+.type-자원봉사후기 {
+    background: #fce8ff;
+    color: #a855f7;
+    border-color: #e9d5ff;
+}
+
+.type-문의 {
+    background: #f0f9ff;
+    color: #0ea5e9;
+    border-color: #bae6fd;
+}
+
+.author-cell {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+}
+
+.author-thumb {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    overflow: hidden;
+    background: #f39a2d;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.author-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.author-id {
+    font-size: 13px;
+    color: #444;
+    font-weight: 600;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 70px;
+}
+
+/* ========================================
+   페이지네이션
+   ======================================== */
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    margin: 24px 0 16px;
+}
+
+.page-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 34px;
+    height: 34px;
+    padding: 0 8px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #555;
+    text-decoration: none;
+    background: #fff;
+    border: 1px solid #eee;
+    transition: all 0.2s;
+}
+
+.page-btn:hover {
+    background: #fff2e3;
+    color: #f39a2d;
+    border-color: #f5c98a;
+}
+
+.page-btn.active {
+    background: #f39a2d;
+    color: #fff;
+    border-color: #f39a2d;
+}
+
+.page-btn .material-symbols-outlined {
+    font-size: 17px;
+}
+
+/* ========================================
+   글쓰기 버튼
+   ======================================== */
+.btn-area {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 12px;
+}
+
+.write-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    height: 38px;
+    padding: 0 18px;
+    border-radius: 999px;
+    background-color: #f39a2d;
+    color: #fff;
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.write-btn:hover {
+    background-color: #e08820;
+}
+
+.write-btn .material-symbols-outlined {
+    font-size: 16px;
+}
+
+/* ========================================
+   퀵메뉴 (인기글 사이드바)
+   ======================================== */
+.quick-menu {
+    position: sticky;
+    top: 20px;
+    background: #fff;
+    border: 1px solid #eee;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+}
+
+.quick-menu-header {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 14px 16px;
+    background: #fff8f0;
+    font-size: 14px;
+    font-weight: 800;
+    color: #f39a2d;
+    border-bottom: 1px solid #f5e8d8;
+}
+
+.quick-menu-header .material-symbols-outlined {
+    font-size: 18px;
+}
+
+.quick-tabs {
+    display: flex;
+    border-bottom: 1px solid #eee;
+}
+
+.quick-tab {
+    flex: 1;
+    padding: 9px 0;
+    border: none;
+    background: transparent;
+    font-size: 12px;
+    font-weight: 700;
+    color: #aaa;
+    cursor: pointer;
+    transition: all 0.2s;
+    border-bottom: 2px solid transparent;
+}
+
+.quick-tab:hover {
+    color: #f39a2d;
+}
+
+.quick-tab.active {
+    color: #f39a2d;
+    border-bottom-color: #f39a2d;
+}
+
+.popular-list {
+    list-style: none;
+    margin: 0;
+    padding: 8px 0;
+}
+
+.popular-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 14px;
+    transition: background 0.15s;
+}
+
+.popular-item:hover {
+    background: #fff8f0;
+}
+
+.popular-rank {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    font-size: 11px;
+    font-weight: 800;
+    flex-shrink: 0;
+    background: #eee;
+    color: #888;
+}
+
+.rank-1 {
+    background: #f39a2d;
+    color: #fff;
+}
+
+.rank-2 {
+    background: #b0b8c1;
+    color: #fff;
+}
+
+.rank-3 {
+    background: #cd7f32;
+    color: #fff;
+}
+
+.popular-title {
+    flex: 1;
+    font-size: 12px;
+    font-weight: 600;
+    color: #333;
+    text-decoration: none;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    transition: color 0.2s;
+}
+
+.popular-title:hover {
+    color: #f39a2d;
+}
+
+.popular-stat {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    font-size: 11px;
+    color: #aaa;
+    flex-shrink: 0;
+}
+
+.popular-stat .material-symbols-outlined {
+    font-size: 13px;
+}
+
+.popular-empty {
+    padding: 20px;
+    text-align: center;
+    color: #bbb;
+    font-size: 13px;
+}
+
+/* ========================================
+   반응형
+   ======================================== */
+@media (max-width: 1240px) {
+    .board-inner {
+        width: 100%;
+        padding: 0 24px;
+    }
+}
+
+@media (max-width: 1024px) {
+    .board-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .board-sidebar {
+        display: none;
+    }
+}
+
+@media (max-width: 768px) {
+    .board-page .page-title {
+        font-size: 1.8rem;
+    }
+
+    .board-search-wrap {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .search-box input[type="text"] {
+        width: 140px;
+    }
+
+    .board-table th:nth-child(1),
+    .board-table td:nth-child(1),
+    .board-table th:nth-child(5),
+    .board-table td:nth-child(5),
+    .board-table th:nth-child(6),
+    .board-table td:nth-child(6) {
+        display: none;
+    }
+}

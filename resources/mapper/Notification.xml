@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="notification">
+
+    <insert id="insertNotification" parameterType="NotificationVO">
+        INSERT INTO NOTIFICATION (
+            NOTI_ID, MEMBER_ID, NOTI_TYPE, NOTI_MSG, LINK_URL, IS_READ, CREATE_DATE
+        ) VALUES (
+            SEQ_NOTIFICATION.NEXTVAL,
+            #{memberId, jdbcType=VARCHAR},
+            #{notiType, jdbcType=VARCHAR},
+            #{notiMsg, jdbcType=VARCHAR},
+            #{linkUrl, jdbcType=VARCHAR},
+            'N',
+            SYSDATE
+        )
+    </insert>
+
+    <select id="selectNotificationList" parameterType="string" resultType="NotificationVO">
+        SELECT
+            NOTI_ID      AS notiId,
+            MEMBER_ID    AS memberId,
+            NOTI_TYPE    AS notiType,
+            NOTI_MSG     AS notiMsg,
+            LINK_URL     AS linkUrl,
+            IS_READ      AS isRead,
+            CREATE_DATE  AS createDate
+        FROM NOTIFICATION
+        WHERE MEMBER_ID = #{memberId}
+        ORDER BY CREATE_DATE DESC, NOTI_ID DESC
+        FETCH FIRST 10 ROWS ONLY
+    </select>
+
+    <select id="selectUnreadCount" parameterType="string" resultType="int">
+        SELECT COUNT(*)
+        FROM NOTIFICATION
+        WHERE MEMBER_ID = #{memberId}
+          AND IS_READ = 'N'
+    </select>
+
+    <update id="updateRead" parameterType="NotificationVO">
+        UPDATE NOTIFICATION
+        SET IS_READ = 'Y'
+        WHERE NOTI_ID = #{notiId}
+          AND MEMBER_ID = #{memberId}
+    </update>
+
+    <select id="selectBoardWriterId" parameterType="int" resultType="string">
+        SELECT MEMBER_ID
+        FROM BOARD
+        WHERE BOARD_ID = #{boardId}
+    </select>
+    <select id="selectCommentWriterId" parameterType="int" resultType="string">
+    SELECT MEMBER_ID
+    FROM BOARD_COMMENT
+    WHERE COMMENT_ID = #{commentId}
+</select>
+
+    <select id="selectVolunteerApplyMemberId" parameterType="int" resultType="string">
+        SELECT MEMBER_ID
+        FROM VOLUNTEER_APPLY
+        WHERE VOLUNTEER_ID = #{volunteerId}
+    </select>
+
+    <select id="selectAdoptionMemberId" parameterType="int" resultType="string">
+        SELECT MEMBER_ID
+        FROM ADOPTION
+        WHERE ADOPTION_ID = #{adoptionId}
+    </select>
+
+    <select id="selectFavoriteMemberIdsByAnimalId" parameterType="int" resultType="string">
+       SELECT MEMBER_ID
+    FROM FAVORITE_ANIMAL
+    WHERE ANIMAL_ID = #{animalId}
+    </select>
+
+</mapper>

@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="support">
+	
+	<resultMap id="supportDetailMap" type="SupportVO">
+	    <id property="supportId" column="SUPPORT_ID"/>
+	    <result property="memberId" column="MEMBER_ID"/>
+	    <result property="content" column="S_CONTENT"/> 
+	    <result property="status" column="STATUS"/>
+	    <result property="createDate" column="S_CREATE_DATE"/>
+	    <result property="title" column="TITLE"/>
+	    <result property="supportType" column="SUPPORT_TYPE"/>
+	    
+	    <collection property="fileList" ofType="SupportFileVO">
+	        <id property="fileId" column="FILE_ID"/>
+	        <result property="saveFileName" column="SAVE_FILE_NAME"/>
+	        <result property="filePath" column="FILE_PATH"/>
+	    </collection>
+	    
+	    <collection property="replyList" ofType="SupportReplyVO">
+	        <id property="replyId" column="REPLY_ID"/> 
+	        <result property="replyContent" column="REPLY_CONTENT"/> 
+	        <result property="createDate" column="REPLY_DATE"/>
+	    </collection>
+	</resultMap>
+	
+	<insert id="insertSupport" parameterType="SupportVO">
+	<selectKey keyProperty="supportId" resultType="int" order="BEFORE">
+        SELECT SEQ_SUPPORT.NEXTVAL FROM DUAL
+    </selectKey>
+		insert into support 
+			(SUPPORT_ID, MEMBER_ID, CONTENT, STATUS, CREATE_DATE, title, support_type
+		)values(
+		#{supportId},  
+        #{memberId},
+        #{content},          
+        'N',                  
+        SYSDATE,
+        #{title},
+        #{supportType}             
+        )
+	</insert>
+	
+	<select id="selectSupportList" resultType="SupportVO">
+		SELECT 
+	        SUPPORT_ID as supportId,
+	        MEMBER_ID as memberId,
+	        CONTENT as content,
+	        STATUS as status,
+	        CREATE_DATE AS createDate,
+	        TITLE as title,
+	        SUPPORT_TYPE AS supportType
+	    FROM SUPPORT
+	   where member_id = #{memberId}
+	   ORDER BY CREATE_DATE DESC
+	</select>
+	
+	<select id="selectSupportListForAdmin" resultMap="supportDetailMap">
+	   SELECT 
+	       S.SUPPORT_ID,
+	       S.MEMBER_ID,
+	       S.CONTENT    AS S_CONTENT,       
+	       S.STATUS,
+	       S.CREATE_DATE AS S_CREATE_DATE, 
+	       S.TITLE,
+	       S.SUPPORT_TYPE,
+	       R.REPLY_ID,
+	       R.CONTENT    AS REPLY_CONTENT,
+	       R.CREATE_DATE AS REPLY_DATE
+	   FROM SUPPORT S
+	   LEFT JOIN SUPPORT_REPLY R ON S.SUPPORT_ID = R.SUPPORT_ID
+	   ORDER BY S.CREATE_DATE DESC
+	</select>
+	
+	<insert id="insertSupportReply" parameterType="SupportReplyVO">
+	    MERGE INTO SUPPORT_REPLY R
+	    USING DUAL
+	       ON (R.SUPPORT_ID = #{supportId}) WHEN MATCHED THEN
+	        UPDATE SET 
+	            CONTENT = #{replyContent},
+	            CREATE_DATE = SYSDATE WHEN NOT MATCHED THEN
+	        INSERT (REPLY_ID, SUPPORT_ID, MEMBER_ID, CONTENT, CREATE_DATE)
+	        VALUES (SEQ_SUPPORT_REPLY.NEXTVAL, #{supportId}, #{memberId}, #{replyContent}, SYSDATE)
+	</insert>
+	
+	<update id="updateSupportStatus" parameterType="int">
+	    UPDATE SUPPORT 
+	    SET STATUS = 'Y' 
+	    WHERE SUPPORT_ID = #{supportId}
+	</update>
+	
+	<select id="selectSupportDetail" parameterType="int" resultMap="supportDetailMap">
+	    SELECT 
+	        S.SUPPORT_ID, S.MEMBER_ID, S.STATUS, S.TITLE, S.SUPPORT_TYPE,
+	        S.CONTENT AS S_CONTENT,        S.CREATE_DATE AS S_CREATE_DATE,
+	        F.FILE_ID, F.SAVE_FILE_NAME, F.FILE_PATH,
+	        R.REPLY_ID,                    R.CONTENT AS REPLY_CONTENT,     R.CREATE_DATE AS REPLY_DATE     FROM SUPPORT S
+	    LEFT JOIN SUPPORT_FILE F ON S.SUPPORT_ID = F.SUPPORT_ID
+	    LEFT JOIN SUPPORT_REPLY R ON S.SUPPORT_ID = R.SUPPORT_ID
+	    WHERE S.SUPPORT_ID = #{supportId}
+	</select>
+    
+    
+    
+    <insert id="insertSupportFile" parameterType="SupportFileVO">
+    INSERT INTO SUPPORT_FILE (
+        FILE_ID, 
+        SUPPORT_ID, 
+        ORIGIN_FILE_NAME, 
+        SAVE_FILE_NAME, 
+        FILE_PATH, 
+        FILE_SIZE, 
+        FILE_EXT, 
+        CREATE_DATE, 
+        IS_IMAGE
+    ) VALUES (
+        SEQ_SUPPORT_FILE.NEXTVAL,  #{supportId},  #{originFileName}, 
+        #{saveFileName}, 
+        #{filePath}, 
+        #{fileSize}, 
+        #{fileExt}, 
+        SYSDATE, 
+        #{isImage, jdbcType=VARCHAR}
+    )
+</insert>
+
+<update id="updateSupport" parameterType="SupportVO">
+    UPDATE SUPPORT 
+       SET TITLE = #{title},
+       SUPPORT_TYPE = #{supportType},
+       CONTENT = #{content},
+       CREATE_DATE = SYSDATE
+       WHERE SUPPORT_ID = #{supportId}  
+ </update>
+ 
+ <delete id="deleteSupportFiles" parameterType="int">
+    DELETE FROM SUPPORT_FILE 
+     WHERE SUPPORT_ID = #{supportId}
+</delete>
+
+<delete id="deleteSupport" parameterType="int">
+    DELETE FROM SUPPORT 
+     WHERE SUPPORT_ID = #{supportId}
+</delete>
+    
+<select id="getSupportCount" parameterType="PageVO" resultType="int">
+	SELECT COUNT(*) 
+    FROM support 
+    WHERE member_id = #{memberId}
+    <if test="status != null and status != '' and status != 'all'">
+        AND STATUS = #{status}
+    </if>
+</select>
+    
+<select id="selectSupportListWithPaging" parameterType="PageVO" resultMap="supportDetailMap">
+    SELECT 
+        SUPPORT_ID, MEMBER_ID, STATUS, TITLE, SUPPORT_TYPE,
+        S_CONTENT, S_CREATE_DATE,
+        REPLY_ID, REPLY_CONTENT, REPLY_DATE
+    FROM (
+        SELECT ROWNUM AS RNUM, A.* FROM (
+            SELECT 
+                S.SUPPORT_ID, S.MEMBER_ID, S.STATUS, S.TITLE, S.SUPPORT_TYPE,
+                S.CONTENT AS S_CONTENT, S.CREATE_DATE AS S_CREATE_DATE,
+                R.REPLY_ID, R.CONTENT AS REPLY_CONTENT, R.CREATE_DATE AS REPLY_DATE
+            FROM SUPPORT S
+            LEFT JOIN SUPPORT_REPLY R ON S.SUPPORT_ID = R.SUPPORT_ID
+            WHERE S.MEMBER_ID = #{memberId}
+            <if test="status != null and status != '' and status != 'all'">
+                AND S.STATUS = #{status}
+            </if>
+            ORDER BY S.SUPPORT_ID DESC
+        ) A WHERE ROWNUM &lt;= #{endRow}
+    ) WHERE RNUM &gt;= #{startRow}
+</select>    
+
+<select id="getAdminSupportCount" parameterType="PageVO" resultType="int">
+    SELECT COUNT(*) FROM SUPPORT
+    <where>
+        <if test="status != null and status != ''">
+            AND STATUS = #{status}
+        </if>
+        <if test="supportType != null and supportType != ''">
+            AND SUPPORT_TYPE = #{supportType}
+        </if>
+    </where>
+</select>
+
+<!-- 관리자용 페이징 목록 -->
+<select id="selectAdminSupportListWithPaging" parameterType="PageVO" resultMap="supportDetailMap">
+    SELECT 
+        SUPPORT_ID, MEMBER_ID, STATUS, TITLE, SUPPORT_TYPE,
+        S_CONTENT, S_CREATE_DATE,
+        REPLY_ID, REPLY_CONTENT, REPLY_DATE
+    FROM (
+        SELECT ROWNUM AS RNUM, A.* FROM (
+            SELECT 
+                S.SUPPORT_ID, S.MEMBER_ID, S.CONTENT AS S_CONTENT,
+                S.STATUS, S.CREATE_DATE AS S_CREATE_DATE,
+                S.TITLE, S.SUPPORT_TYPE,
+                R.REPLY_ID, R.CONTENT AS REPLY_CONTENT, R.CREATE_DATE AS REPLY_DATE
+            FROM SUPPORT S
+            LEFT JOIN SUPPORT_REPLY R ON S.SUPPORT_ID = R.SUPPORT_ID
+            <where>
+                <if test="status != null and status != ''">
+                    AND S.STATUS = #{status}
+                </if>
+                <if test="supportType != null and supportType != ''">
+                    AND S.SUPPORT_TYPE = #{supportType}
+                </if>
+            </where>
+            ORDER BY S.CREATE_DATE DESC
+        ) A WHERE ROWNUM &lt;= #{endRow}
+    ) WHERE RNUM &gt;= #{startRow}
+</select>
+    
+</mapper>

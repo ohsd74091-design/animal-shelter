@@ -1,0 +1,379 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="board">
+
+	<!-- ========================= 게시글 ========================= -->
+
+	<!-- 게시글 목록 조회 (페이징 + 필터) -->
+	<select id="selectBoardList" parameterType="map"
+		resultType="BoardVO">
+		SELECT * FROM (
+		SELECT ROWNUM AS RN, T.* FROM (
+		SELECT
+		B.BOARD_ID AS
+		boardId,
+		B.MEMBER_ID AS memberId,
+		B.BOARD_TYPE AS boardType,
+		B.TITLE AS
+		title,
+		B.CONTENT AS content,
+		B.VIEW_COUNT AS viewCount,
+		B.LIKE_COUNT AS
+		likeCount,
+		TO_CHAR(B.CREATE_DATE, 'YYYY-MM-DD') AS createDate,
+		B.IS_HIDDEN AS isHidden,
+		M.PROFILE_IMG AS profileImg,
+		M.ROLE AS role
+		FROM BOARD B
+		LEFT JOIN MEMBER M ON B.MEMBER_ID = M.MEMBER_ID
+		WHERE 1=1
+		AND (B.IS_HIDDEN IS NULL OR B.IS_HIDDEN = 'N')
+		<if
+			test="boardType != null and boardType != '' and boardType != '전체'">
+			AND B.BOARD_TYPE = #{boardType}
+		</if>
+		<if test="keyword != null and keyword != ''">
+			AND B.TITLE LIKE '%' || #{keyword} || '%'
+		</if>
+		ORDER BY B.BOARD_ID DESC
+		) T
+		WHERE ROWNUM &lt;= #{endRow}
+		)
+		WHERE RN &gt;=
+		#{startRow}
+	</select>
+
+	<!-- 인기글 조회 (조회수 + 추천수 기준 상위 5개) - -->
+	<select id="selectPopularBoardList" resultType="BoardVO">
+		SELECT * FROM (
+		SELECT
+		BOARD_ID AS boardId,
+		MEMBER_ID AS memberId,
+		BOARD_TYPE AS
+		boardType,
+		TITLE AS title,
+		VIEW_COUNT AS viewCount,
+		LIKE_COUNT AS
+		likeCount,
+		TO_CHAR(CREATE_DATE, 'YYYY-MM-DD') AS createDate
+		FROM BOARD
+		WHERE (IS_HIDDEN IS NULL OR IS_HIDDEN = 'N')
+		AND CREATE_DATE >= SYSDATE
+		- 7 -- 최근 7일 이내
+		ORDER BY (VIEW_COUNT + LIKE_COUNT * 2) DESC
+		)
+		WHERE
+		ROWNUM &lt;= 5
+	</select>
+
+	<!-- 추천순 인기글 -->
+	<select id="selectPopularBoardListByLike" resultType="BoardVO">
+		SELECT *
+		FROM (
+		SELECT
+		BOARD_ID AS boardId,
+		MEMBER_ID AS memberId,
+		BOARD_TYPE AS
+		boardType,
+		TITLE AS title,
+		VIEW_COUNT AS viewCount,
+		LIKE_COUNT AS
+		likeCount,
+		TO_CHAR(CREATE_DATE, 'YYYY-MM-DD') AS createDate
+		FROM BOARD
+		WHERE (IS_HIDDEN IS NULL OR IS_HIDDEN = 'N')
+		AND CREATE_DATE >= SYSDATE
+		- 7
+		ORDER BY LIKE_COUNT DESC, VIEW_COUNT DESC
+		)
+		WHERE ROWNUM &lt;= 5
+	</select>
+
+
+	<!-- 게시글 전체 건수 (페이징용) -->
+	<select id="selectBoardCount" parameterType="map"
+		resultType="int">
+		SELECT COUNT(*)
+		FROM BOARD
+		WHERE 1=1
+		AND (IS_HIDDEN IS NULL OR IS_HIDDEN
+		= 'N')
+		<if
+			test="boardType != null and boardType != '' and boardType != '전체'">
+			AND BOARD_TYPE = #{boardType}
+		</if>
+		<if test="keyword != null and keyword != ''">
+			AND TITLE LIKE '%' || #{keyword} || '%'
+		</if>
+	</select>
+
+	<!-- 게시글 상세 조회 -->
+	<select id="selectBoard" parameterType="int"
+		resultType="BoardVO">
+		SELECT
+		B.BOARD_ID AS boardId,
+		B.MEMBER_ID AS memberId,
+		B.BOARD_TYPE AS boardType,
+		B.TITLE AS title,
+		B.CONTENT AS content,
+		B.VIEW_COUNT AS viewCount,
+		B.LIKE_COUNT AS likeCount,
+		TO_CHAR(B.CREATE_DATE, 'YYYY-MM-DD') AS createDate,
+		M.ROLE AS role
+		FROM
+		BOARD B
+		LEFT JOIN MEMBER M ON B.MEMBER_ID = M.MEMBER_ID
+		WHERE B.BOARD_ID
+		= #{value}
+	</select>
+
+	<!-- 조회수 증가 -->
+	<update id="updateViewCount" parameterType="int">
+		UPDATE BOARD
+		SET
+		VIEW_COUNT = VIEW_COUNT + 1
+		WHERE BOARD_ID = #{value}
+	</update>
+
+	<!-- 게시글 등록 -->
+	<insert id="insertBoard" parameterType="BoardVO">
+		<selectKey keyProperty="boardId" resultType="int"
+			order="BEFORE">
+			SELECT SEQ_BOARD.NEXTVAL FROM DUAL
+		</selectKey>
+		INSERT INTO BOARD (
+		BOARD_ID, MEMBER_ID, BOARD_TYPE,
+		TITLE, CONTENT,
+		VIEW_COUNT, LIKE_COUNT, CREATE_DATE
+		) VALUES (
+		#{boardId}, #{memberId},
+		#{boardType},
+		#{title}, #{content}, 0, 0, SYSDATE
+		)
+	</insert>
+
+	<!-- 게시글 수정 -->
+	<update id="updateBoard" parameterType="BoardVO">
+		UPDATE BOARD
+		SET
+		BOARD_TYPE = #{boardType},
+		TITLE = #{title},
+		CONTENT = #{content}
+		WHERE
+		BOARD_ID = #{boardId}
+	</update>
+
+	<!-- 게시글 삭제 -->
+	<delete id="deleteBoard" parameterType="int">
+		DELETE FROM BOARD
+		WHERE
+		BOARD_ID = #{value}
+	</delete>
+
+	<!-- 게시글 숨김 처리 (신고 5회 이상 자동) -->
+	<update id="hideBoard" parameterType="int">
+		UPDATE BOARD
+		SET IS_HIDDEN =
+		'Y'
+		WHERE BOARD_ID = #{value}
+	</update>
+
+	<!-- ========================= 추천 ========================= -->
+
+	<!-- 추천 여부 확인 (중복 방지) -->
+	<select id="checkBoardLike" parameterType="map" resultType="int">
+		SELECT COUNT(*)
+		FROM BOARD_LIKE
+		WHERE BOARD_ID = #{boardId}
+		AND MEMBER_ID
+		= #{memberId}
+	</select>
+
+	<!-- 추천 등록 -->
+	<insert id="insertBoardLike" parameterType="map">
+		INSERT INTO
+		BOARD_LIKE (BOARD_ID, MEMBER_ID)
+		VALUES (#{boardId}, #{memberId})
+	</insert>
+
+	<!-- 추천 취소 -->
+	<delete id="deleteBoardLike" parameterType="map">
+		DELETE FROM
+		BOARD_LIKE
+		WHERE BOARD_ID = #{boardId}
+		AND MEMBER_ID = #{memberId}
+	</delete>
+
+	<!-- 추천수 +1 -->
+	<update id="updateLikeCount" parameterType="int">
+		UPDATE BOARD
+		SET
+		LIKE_COUNT = LIKE_COUNT + 1
+		WHERE BOARD_ID = #{value}
+	</update>
+
+	<!-- 추천수 -1 -->
+	<update id="decreaseLikeCount" parameterType="int">
+		UPDATE BOARD
+		SET
+		LIKE_COUNT = LIKE_COUNT - 1
+		WHERE BOARD_ID = #{value}
+	</update>
+
+	<!-- ========================= 댓글 ========================= -->
+
+	<!-- 댓글 목록 조회 -->
+	<select id="selectCommentList" parameterType="int"
+		resultType="BoardCommentVO">
+		SELECT
+		C.COMMENT_ID AS commentId,
+		C.BOARD_ID AS boardId,
+		C.MEMBER_ID AS memberId,
+		C.CONTENT AS content,
+		TO_CHAR(C.CREATE_DATE, 'YYYY-MM-DD') AS createDate,
+		C.PARENT_COMMENT_ID AS parentCommentId,
+		M.ROLE AS role
+		FROM BOARD_COMMENT C
+		LEFT JOIN MEMBER M ON C.MEMBER_ID = M.MEMBER_ID
+		WHERE C.BOARD_ID = #{value}
+		ORDER BY NVL(C.PARENT_COMMENT_ID, C.COMMENT_ID) ASC, C.COMMENT_ID ASC
+	</select>
+
+	<!-- 댓글 등록 -->
+	<insert id="insertComment" parameterType="BoardCommentVO">
+		<selectKey keyProperty="commentId" resultType="int"
+			order="BEFORE">
+			SELECT SEQ_BOARD_COMMENT.NEXTVAL FROM DUAL
+		</selectKey>
+
+		INSERT INTO BOARD_COMMENT (
+		COMMENT_ID,
+		BOARD_ID,
+		MEMBER_ID,
+		CONTENT,
+		CREATE_DATE,
+		PARENT_COMMENT_ID
+		) VALUES (
+		#{commentId},
+		#{boardId},
+		#{memberId},
+		#{content},
+		SYSDATE,
+		#{parentCommentId, jdbcType=INTEGER}
+		)
+	</insert>
+
+	<!-- 댓글 삭제 -->
+	<delete id="deleteComment" parameterType="int">
+		DELETE FROM
+		BOARD_COMMENT
+		WHERE COMMENT_ID = #{value}
+	</delete>
+
+	<!--댓글신고 -->
+	<insert id="insertCommentReport">
+		INSERT INTO BOARD_COMMENT_REPORT
+		VALUES
+		(SEQ_COMMENT_REPORT.NEXTVAL,
+		#{commentId},
+		#{memberId},
+		#{reason},
+		SYSDATE)
+	</insert>
+
+	<!-- 댓글 수정 -->
+	<update id="updateComment" parameterType="BoardCommentVO">
+		UPDATE BOARD_COMMENT
+		SET CONTENT = #{content}
+		WHERE COMMENT_ID = #{commentId}
+	</update>
+
+	<!-- ========================= 회원/파일 ========================= -->
+
+	<!-- 회원 상태 조회 -->
+	<select id="getMemberStatus" parameterType="string"
+		resultType="string">
+		SELECT STATUS
+		FROM MEMBER
+		WHERE MEMBER_ID = #{value}
+	</select>
+
+	<!-- 첨부파일 등록 -->
+	<insert id="insertBoardFile" parameterType="BoardFileVO">
+		INSERT INTO
+		BOARD_FILE (
+		FILE_ID, BOARD_ID, ORIGIN_FILE_NAME, SAVE_FILE_NAME,
+		FILE_PATH, FILE_SIZE, FILE_EXT, CREATE_DATE, IS_IMAGE
+		) VALUES (
+		SEQ_BOARD_FILE.NEXTVAL,
+		#{boardId}, #{originFileName}, #{saveFileName},
+		#{filePath}, #{fileSize}, #{fileExt}, SYSDATE, #{isImage}
+		)
+	</insert>
+
+	<!-- 첨부파일 목록 조회 -->
+	<select id="selectFileList" parameterType="int"
+		resultType="BoardFileVO">
+		SELECT
+		FILE_ID AS fileId,
+		BOARD_ID AS boardId,
+		ORIGIN_FILE_NAME AS originFileName,
+		SAVE_FILE_NAME AS saveFileName,
+		FILE_PATH AS filePath
+		FROM BOARD_FILE
+		WHERE BOARD_ID = #{value}
+	</select>
+
+	<!-- 파일 단건 조회 -->
+	<select id="selectFile" parameterType="int"
+		resultType="BoardFileVO">
+		SELECT
+		FILE_ID AS fileId,
+		BOARD_ID AS boardId,
+		ORIGIN_FILE_NAME AS originFileName,
+		SAVE_FILE_NAME AS saveFileName,
+		FILE_PATH AS filePath,
+		FILE_SIZE AS fileSize,
+		FILE_EXT AS fileExt,
+		IS_IMAGE AS isImage
+		FROM BOARD_FILE
+		WHERE FILE_ID = #{value}
+	</select>
+
+	<!-- ========================= 신고 ========================= -->
+
+	<!-- 신고 등록 -->
+	<insert id="insertBoardReport" parameterType="BoardReportVO">
+		INSERT INTO
+		BOARD_REPORT (
+		REPORT_ID, BOARD_ID, MEMBER_ID,
+		REASON, REPORT_DATE,
+		STATUS
+		) VALUES (
+		SEQ_BOARD_REPORT.NEXTVAL,
+		#{boardId}, #{memberId},
+		#{reason}, SYSDATE, 'N'
+		)
+	</insert>
+
+	<!-- 신고 횟수 조회 -->
+	<select id="countBoardReport" parameterType="int"
+		resultType="int">
+		SELECT COUNT(*)
+		FROM BOARD_REPORT
+		WHERE BOARD_ID = #{value}
+	</select>
+
+	<!-- 중복 신고 여부 확인 (같은 사람이 같은 글 중복 신고 방지) -->
+	<select id="checkBoardReport" parameterType="map"
+		resultType="int">
+		SELECT COUNT(*)
+		FROM BOARD_REPORT
+		WHERE BOARD_ID = #{boardId}
+		AND MEMBER_ID = #{memberId}
+	</select>
+
+</mapper>

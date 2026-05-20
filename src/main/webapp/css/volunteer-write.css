@@ -1,0 +1,192 @@
+@charset "UTF-8";
+
+.volunteer-apply-page {
+  background: #fdf5f0;
+  font-family: "Be Vietnam Pro", sans-serif;
+  color: #322e2b;
+}
+
+.volunteer-apply-page .apply-main {
+  padding-top: 40px;
+  padding-bottom: 80px;
+}
+
+.volunteer-apply-page .container--narrow {
+  width: min(860px, calc(100% - 32px));
+  margin: 0 auto;
+}
+
+.volunteer-apply-page .apply-card {
+  background: #ffffff;
+  border-radius: 24px;
+  padding: 40px 36px;
+  box-shadow: 0 20px 40px rgba(50, 46, 43, 0.06);
+}
+
+.volunteer-apply-page .section-header {
+  margin-bottom: 28px;
+}
+
+.volunteer-apply-page .section-title {
+  margin: 0 0 8px;
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 34px;
+  font-weight: 800;
+}
+
+.volunteer-apply-page .section-description {
+  margin: 0;
+  color: #5f5b57;
+}
+
+.volunteer-apply-page .apply-form {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.volunteer-apply-page .form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.volunteer-apply-page .form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.volunteer-apply-page .form-label {
+  font-size: 14px;
+  font-weight: 700;
+  color: #5f5b57;
+}
+
+.volunteer-apply-page .form-input,
+.volunteer-apply-page .form-textarea {
+  width: 100%;
+  border: none;
+  border-radius: 16px;
+  background: #f7efea;
+  padding: 16px 18px;
+  font: inherit;
+  color: #322e2b;
+  box-sizing: border-box;
+}
+
+.volunteer-apply-page .form-input:focus,
+.volunteer-apply-page .form-textarea:focus {
+  outline: 2px solid rgba(255, 122, 47, 0.35);
+  background: #fffaf7;
+}
+
+.volunteer-apply-page .form-input--disabled {
+  color: #7b7672;
+  cursor: not-allowed;
+}
+
+.volunteer-apply-page .form-textarea {
+  min-height: 140px;
+  resize: vertical;
+}
+
+.volunteer-apply-page .interest-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.volunteer-apply-page .select-card {
+  display: block;
+  cursor: pointer;
+}
+
+.volunteer-apply-page .select-card__input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.volunteer-apply-page .select-card__box {
+  border: 2px solid transparent;
+  border-radius: 18px;
+  background: #efe7e1;
+  padding: 20px;
+  transition: all 0.2s ease;
+}
+
+.volunteer-apply-page .select-card:hover .select-card__box {
+  transform: translateY(-2px);
+}
+
+.volunteer-apply-page .select-card__input:checked + .select-card__box {
+  border-color: #9c3f00;
+  background: rgba(255, 122, 47, 0.1);
+}
+
+.volunteer-apply-page .select-card__input:disabled + .select-card__box {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.volunteer-apply-page .select-card__title {
+  margin: 0 0 6px;
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.volunteer-apply-page .select-card__text {
+  margin: 0;
+  color: #5f5b57;
+  font-size: 14px;
+}
+
+.volunteer-apply-page .agreement__label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.volunteer-apply-page .agreement__checkbox {
+  width: 18px;
+  height: 18px;
+}
+
+.volunteer-apply-page .submit-wrap {
+  padding-top: 8px;
+}
+
+.volunteer-apply-page .submit-button {
+  width: 100%;
+  border: none;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #9c3f00, #ff7a2f);
+  color: #fff;
+  padding: 18px 24px;
+  font-size: 18px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.volunteer-apply-page .empty-box {
+  padding: 20px;
+  border-radius: 16px;
+  background: #f7efea;
+  color: #7b7672;
+}
+
+@media (max-width: 768px) {
+  .volunteer-apply-page .form-grid,
+  .volunteer-apply-page .interest-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .volunteer-apply-page .apply-card {
+    padding: 28px 20px;
+  }
+
+  .volunteer-apply-page .section-title {
+    font-size: 28px;
+  }
+}

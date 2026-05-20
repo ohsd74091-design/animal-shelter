@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+  PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-config.dtd">
+  
+  <configuration>
+  
+  	<properties resource="config/db.properties" /> 
+  
+  	<!--이곳에 as 지정   -->
+  <typeAliases> 
+  	<typeAlias type="kr.or.ddit.common.vo.PageVO" alias="PageVO"/>
+  	
+  	<typeAlias type="kr.or.ddit.member.vo.MemberVO" alias="MemberVO"/>
+  	
+  	<typeAlias type="kr.or.ddit.mypage.vo.MypageStatsVO" alias="MypageStatsVO"/>
+  	<typeAlias type="kr.or.ddit.mypage.vo.ActivityVO" alias="ActivityVO"/>
+  	<typeAlias type="kr.or.ddit.mypage.vo.AdoptionHistoryVO" alias="AdoptionHistoryVO"/>
+  	<typeAlias type="kr.or.ddit.mypage.vo.VolunteerHistoryVO" alias="VolunteerHistoryVO"/>
+  	
+  	<typeAlias type="kr.or.ddit.animal.vo.AnimalVO" alias="AnimalVO"/>
+  	<typeAlias type="kr.or.ddit.animal.vo.AnimalImageVO" alias="AnimalImageVO"/>
+  	<typeAlias type="kr.or.ddit.animal.vo.AnimalMedicalVO" alias="AnimalMedicalVO"/>
+  	<typeAlias type="kr.or.ddit.animal.vo.AnimalRescueVO" alias="AnimalRescueVO"/>
+  	
+  	<typeAlias type="kr.or.ddit.volunteer_recruit.vo.Volunteer_RecruitVO" alias="Volunteer_RecruitVO"/>
+  	<typeAlias type="kr.or.ddit.volunteer_recruit.vo.Volunteer_ApplyVO" alias="Volunteer_ApplyVO"/>
+  	<typeAlias type="kr.or.ddit.volunteer_recruit.vo.Volunteer_RecruitDetailVO" alias="Volunteer_RecruitDetailVO"/>
+  		
+  	<typeAlias type="kr.or.ddit.donation.vo.DonationVO" alias="DonationVO"/>
+  	
+  	<typeAlias type="kr.or.ddit.support.vo.SupportVO" alias="SupportVO"/>
+  	<typeAlias type="kr.or.ddit.support.vo.SupportReplyVO" alias="SupportReplyVO"/>
+  	<typeAlias type="kr.or.ddit.support.vo.SupportFileVO" alias="SupportFileVO"/>
+  	
+  	<typeAlias type="kr.or.ddit.board.vo.BoardVO"        alias="BoardVO"/>
+	<typeAlias type="kr.or.ddit.board.vo.BoardCommentVO" alias="BoardCommentVO"/>
+	<typeAlias type="kr.or.ddit.board.vo.BoardFileVO"    alias="BoardFileVO"/>
+	<typeAlias type="kr.or.ddit.board.vo.BoardReportVO"  alias="BoardReportVO"/>
+	<typeAlias type="kr.or.ddit.board.vo.CommentReportVO" alias="CommentReportVO"/>
+	
+	<typeAlias type="kr.or.ddit.adoption.vo.AdoptionVO" alias="AdoptionVO"/>
+	<typeAlias type="kr.or.ddit.adoption.vo.AdoptionDetailVO" alias="AdoptionDetailVO"/>
+	
+	<typeAlias type="kr.or.ddit.report.vo.AnimalReportVO" alias="AnimalReportVO"/>
+	<typeAlias type="kr.or.ddit.report.vo.MemberReportVO" alias="MemberReportVO"/>
+	<typeAlias type="kr.or.ddit.notification.vo.NotificationVO" alias="NotificationVO"/>
+  </typeAliases> 
+  
+  
+  	<environments default="dev">
+  		<environment id="dev">
+  			<transactionManager type="JDBC"></transactionManager>
+  			<dataSource type="POOLED">
+  				<property name="driver" value="${driver}"/>
+				<property name="url" value="${url}"/>
+				<property name="username" value="${username}"/>
+				<property name="password" value="${password}"/>
+  			</dataSource>
+  		 </environment>
+  	</environments>
+  
+  	<mappers>
+  		<mapper resource="mapper/Member.xml"/>
+  		<mapper resource="mapper/Admin.xml"/>
+  		<mapper resource="mapper/mypage.xml"/>
+  		<mapper resource="mapper/animal.xml"/>
+  		<mapper resource="mapper/Volunteer_Recruit.xml"/>
+  		<mapper resource="mapper/Donation.xml"/>
+  		<mapper resource="mapper/Board.xml"/>
+  		<mapper resource="mapper/Support.xml"/>
+  		<mapper resource="mapper/adoption.xml"/>
+  		<mapper resource="mapper/Report.xml"/>
+  		<mapper resource="mapper/adminNotification.xml"/>
+		<mapper resource="mapper/adminSearch.xml"/>
+		<mapper resource="mapper/Notification.xml"/> 
+		<mapper resource="mapper/certificate-mapper.xml"/>
+  	</mappers>
+  	
+  </configuration>
+  
+ 

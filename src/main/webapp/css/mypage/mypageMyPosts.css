@@ -1,0 +1,437 @@
+/* =====================================================
+   mypageMyPosts.css
+   내 작성글 페이지 전용 스타일
+   - 공통: common.css / 사이드바 등: mypage.css 참조
+   ===================================================== */
+
+/* --------------------------------------------------
+   페이지 헤더
+-------------------------------------------------- */
+.page-header {
+    margin-bottom: 1.5rem;
+}
+
+.page-title {
+    font-size: 1.875rem;
+    font-weight: 900;
+    color: #0d1117;
+    margin: 0 0 0.4rem;
+}
+
+.page-desc {
+    font-size: 0.9rem;
+    color: #64748b;
+    margin: 0;
+}
+
+
+/* --------------------------------------------------
+   게시글 카드 래퍼
+-------------------------------------------------- */
+.posts-card {
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 1rem;
+    overflow: hidden;
+    box-shadow: 0 1px 4px rgba(0,0,0,.05);
+}
+
+
+/* --------------------------------------------------
+   툴바 (탭 + 검색)
+-------------------------------------------------- */
+.posts-card__toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid #f1f5f9;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+/* 탭 wrap */
+.posts-tab-wrap {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+}
+
+/* 탭 pill 버튼 */
+.posts-tab {
+    display: inline-block;
+    padding: 0.45rem 1rem;
+    border-radius: 9999px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #64748b;
+    text-decoration: none;
+    transition: background 0.15s, color 0.15s;
+    white-space: nowrap;
+}
+
+.posts-tab:hover {
+    background: #f1f5f9;
+    color: #374151;
+}
+
+.posts-tab.active {
+    background: #ec5b13;
+    color: #fff;
+}
+
+/* 검색 폼 */
+.posts-search-form {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 9999px;
+    padding: 0.45rem 1rem;
+    background: #f8fafc;
+    min-width: 15rem;
+}
+
+.posts-search-form .material-symbols-outlined {
+    font-size: 1.1rem;
+    color: #94a3b8;
+}
+
+.posts-search-input {
+    border: none;
+    background: transparent;
+    outline: none;
+    font-size: 0.875rem;
+    color: #374151;
+    width: 100%;
+    font-family: inherit;
+}
+
+.posts-search-input::placeholder {
+    color: #94a3b8;
+}
+
+
+/* --------------------------------------------------
+   테이블
+-------------------------------------------------- */
+.posts-table-wrap {
+    overflow-x: auto;
+}
+
+.posts-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+.posts-table thead {
+    background: #f8fafc;
+}
+
+.posts-table th {
+    padding: 0.875rem 1.25rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    white-space: nowrap;
+}
+
+.posts-table tbody tr {
+    border-top: 1px solid #f1f5f9;
+    transition: background 0.15s;
+}
+
+.posts-table tbody tr:hover {
+    background: #fafafa;
+}
+
+.posts-table td {
+    padding: 1.1rem 1.25rem;
+    font-size: 0.875rem;
+    color: #64748b;
+    vertical-align: middle;
+}
+
+/* 컬럼 너비 */
+.col-type  { width: 8rem; }
+.col-title { width: auto; }
+.col-date  { width: 7rem; white-space: nowrap; }
+.col-view  { width: 5rem; text-align: center; }
+.col-like  { width: 5rem; text-align: center; }
+.col-edit  { width: 3.5rem; text-align: center; }
+.col-del   { width: 3.5rem; text-align: center; }
+
+/* 조회/추천 아이콘 정렬 */
+.col-view, .col-like {
+    display: table-cell;
+}
+
+.posts-table td.col-view,
+.posts-table td.col-like {
+    display: table-cell;
+}
+
+.posts-table td.col-view span,
+.posts-table td.col-like span {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.25rem;
+}
+
+.posts-table td.col-view .material-symbols-outlined,
+.posts-table td.col-like .material-symbols-outlined {
+    font-size: 1rem;
+}
+
+
+/* --------------------------------------------------
+   카테고리 뱃지 (BOARD_TYPE 기준 한글 클래스)
+-------------------------------------------------- */
+.board-type-badge {
+    display: inline-block;
+    padding: 0.2rem 0.6rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.board-type-badge--free {
+    background: #fef3c7;
+    color: #92400e;
+}
+ 
+.board-type-badge--adoption {
+    background: #dbeafe;
+    color: #1e40af;
+}
+ 
+.board-type-badge--volunteer {
+    background: #dcfce7;
+    color: #166534;
+}
+ 
+.board-type-badge--etc {
+    background: #f1f5f9;
+    color: #475569;
+}
+
+
+/* --------------------------------------------------
+   제목 링크 + 댓글 수
+-------------------------------------------------- */
+.post-title-link {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #1e293b;
+    text-decoration: none;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    transition: color 0.15s;
+}
+
+.post-title-link:hover {
+    color: #ec5b13;
+}
+
+.comment-count {
+    font-size: 0.8rem;
+    font-weight: 400;
+    color: #94a3b8;
+    margin-left: 0.25rem;
+}
+
+
+/* --------------------------------------------------
+   수정/삭제 아이콘 버튼
+-------------------------------------------------- */
+.btn-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    color: #94a3b8;
+    text-decoration: none;
+    transition: background 0.15s, color 0.15s;
+    font-family: inherit;
+}
+
+.btn-icon .material-symbols-outlined {
+    font-size: 1.125rem;
+}
+
+.btn-icon--edit:hover {
+    background: #f1f5f9;
+    color: #ec5b13;
+}
+
+.btn-icon--del:hover {
+    background: #fef2f2;
+    color: #ef4444;
+}
+
+
+/* --------------------------------------------------
+   하단 (총 개수 + 페이지네이션)
+-------------------------------------------------- */
+.posts-card__footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 1.5rem;
+    border-top: 1px solid #f1f5f9;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+}
+
+.posts-total-info {
+    font-size: 0.75rem;
+    color: #94a3b8;
+    margin: 0;
+}
+
+/* 페이지네이션 */
+.pagination {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+.page-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    border: 1px solid #e2e8f0;
+    background: #fff;
+    color: #475569;
+    font-size: 0.8rem;
+    font-weight: 500;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+    font-family: inherit;
+}
+
+.page-btn:hover:not(:disabled):not(.page-btn--active) {
+    background: #f8fafc;
+    color: #ec5b13;
+}
+
+.page-btn--active {
+    background: #ec5b13;
+    color: #fff;
+    border-color: #ec5b13;
+    font-weight: 700;
+    cursor: default;
+}
+
+.page-btn--arrow {
+    color: #94a3b8;
+    border-color: #e2e8f0;
+}
+
+.page-btn--arrow:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.page-btn .material-symbols-outlined {
+    font-size: 1rem;
+}
+
+
+/* --------------------------------------------------
+   빈 상태
+-------------------------------------------------- */
+.posts-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 4rem 2rem;
+    gap: 0.75rem;
+}
+
+.posts-empty__icon {
+    font-size: 3.5rem;
+    color: #cbd5e1;
+}
+
+.posts-empty__msg {
+    font-size: 1rem;
+    color: #94a3b8;
+    margin: 0;
+}
+
+
+/* --------------------------------------------------
+   새 글 작성 버튼
+-------------------------------------------------- */
+.posts-write-wrap {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 1.25rem;
+}
+
+.btn-write {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    background: #ec5b13;
+    color: #fff;
+    border-radius: 9999px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    text-decoration: none;
+    box-shadow: 0 4px 12px rgba(236,91,19,.3);
+    transition: background 0.2s, transform 0.15s;
+}
+
+.btn-write:hover {
+    background: #d44e0e;
+    transform: translateY(-1px);
+}
+
+.btn-write:active {
+    transform: scale(0.97);
+}
+
+.btn-write .material-symbols-outlined {
+    font-size: 1.2rem;
+}
+
+
+/* --------------------------------------------------
+   반응형
+-------------------------------------------------- */
+@media (max-width: 640px) {
+    .posts-card__toolbar {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .posts-search-form {
+        width: 100%;
+        min-width: unset;
+    }
+
+    .posts-card__footer {
+        flex-direction: column;
+        align-items: center;
+    }
+}

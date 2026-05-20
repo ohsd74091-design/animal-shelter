@@ -1,0 +1,433 @@
+/* ===== CSS 변수 (기존 프로젝트 오렌지 계열 통일) ===== */
+:root {
+    --primary:       #f37321;
+    --primary-light: #fff4e5;
+    --primary-mid:   #ffe0c0;
+    --primary-dark:  #d65d10;
+    --text-main:     #333;
+    --text-sub:      #888;
+    --border:        #e8e8e8;
+    --bg:            #f8f9fa;
+    --white:         #ffffff;
+    --success:       #2ecc71;
+    --card-shadow:   0 4px 24px rgba(243,115,33,0.08);
+}
+
+/* donation 페이지 내부 요소만 초기화 */
+.donate-wrap *, .page-hero * {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Noto Sans KR', sans-serif;
+    background: var(--bg);
+    color: var(--text-main);
+    min-height: 100vh;
+}
+
+/* ===== 헤더 (기존 common header 대체용 — JSP include 사용 시 삭제) ===== */
+.page-hero {
+    background: linear-gradient(135deg, var(--primary-light) 0%, #fff 60%);
+    border-bottom: 1px solid var(--primary-mid);
+    padding: 15px 10px 10px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+.page-hero::before {
+    content: '';
+    position: absolute;
+    width: 320px; height: 320px;
+    background: radial-gradient(circle, rgba(243,115,33,0.12) 0%, transparent 70%);
+    top: -80px; right: -80px;
+    border-radius: 50%;
+}
+.page-hero::after {
+    content: '';
+    position: absolute;
+    width: 200px; height: 200px;
+    background: radial-gradient(circle, rgba(243,115,33,0.08) 0%, transparent 70%);
+    bottom: -60px; left: -40px;
+    border-radius: 50%;
+}
+.hero-icon {
+    font-size: 30px;
+    color: var(--primary);
+    display: block;
+    margin-bottom: 6px;
+}
+.page-hero h2 {
+    font-size: 1.5rem;
+    font-weight: 900;
+    color: var(--text-main);
+    margin-bottom: 3px;
+}
+.page-hero h2 span { color: var(--primary); }
+.page-hero p {
+    color: var(--text-sub);
+    font-size: 0.95rem;
+}
+
+/* ===== 레이아웃 ===== */
+.donate-wrap {
+    max-width: 900px;
+    margin: 40px auto 80px;
+    padding: 0 20px;
+}
+
+/* ===== 카드 (섹션 공통) ===== */
+.card {
+    background: var(--white);
+    border-radius: 16px;
+    box-shadow: var(--card-shadow);
+    border: 1px solid var(--border);
+    padding: 32px 36px;
+    margin-bottom: 20px;
+    transition: box-shadow 0.2s;
+}
+.card:hover { box-shadow: 0 8px 32px rgba(243,115,33,0.13); }
+
+.section-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--primary);
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid var(--primary-light);
+}
+.section-title .material-symbols-outlined { font-size: 20px; }
+
+/* ===== 후원 방식 탭 ===== */
+.type-tabs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+.type-tabs input[type="radio"] { display: none; }
+.type-tabs label {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 20px;
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    cursor: pointer;
+    background: var(--bg);
+    color: var(--text-sub);
+    font-weight: 500;
+    transition: all 0.2s;
+    text-align: center;
+}
+.type-tabs label .tab-icon { font-size: 28px; }
+.type-tabs label .tab-desc { font-size: 0.78rem; color: #bbb; margin-top: 2px; }
+.type-tabs input:checked + label {
+    border-color: var(--primary);
+    background: var(--primary-light);
+    color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(243,115,33,0.12);
+}
+.type-tabs input:checked + label .tab-desc { color: #f5a96a; }
+
+/* ===== 금액 빠른 선택 ===== */
+.amount-presets {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    margin-bottom: 16px;
+}
+.preset-btn {
+    padding: 10px 6px;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    background: var(--bg);
+    color: var(--text-main);
+    font-size: 0.88rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.18s;
+    font-family: 'Noto Sans KR', sans-serif;
+}
+.preset-btn:hover, .preset-btn.active {
+    border-color: var(--primary);
+    background: var(--primary-light);
+    color: var(--primary);
+}
+
+/* ===== 입력 공통 ===== */
+.input-group { margin-bottom: 16px; }
+.input-group label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #555;
+    margin-bottom: 6px;
+}
+.input-field {
+    width: 100%;
+    padding: 13px 16px;
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    font-size: 0.95rem;
+    font-family: 'Noto Sans KR', sans-serif;
+    color: var(--text-main);
+    background: var(--white);
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+.input-field:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(243,115,33,0.1);
+}
+.amount-wrap {
+    position: relative;
+}
+.amount-wrap .input-field {
+    padding-right: 36px;
+    font-size: 1.1rem;
+    font-weight: 700;
+}
+.amount-wrap .unit {
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-sub);
+    font-size: 0.9rem;
+}
+.input-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+/* ===== 영수증 체크박스 ===== */
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-main);
+    padding: 14px 16px;
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    transition: all 0.2s;
+    background: var(--bg);
+}
+.checkbox-label:hover { border-color: var(--primary); background: var(--primary-light); }
+.checkbox-label input[type="checkbox"] { display: none; }
+.check-box {
+    width: 22px; height: 22px;
+    border: 2px solid var(--border);
+    border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s;
+    flex-shrink: 0;
+}
+.checkbox-label input:checked ~ .check-icon-wrap .check-box,
+.checkbox-label.checked .check-box {
+    background: var(--primary);
+    border-color: var(--primary);
+}
+.check-mark { display: none; color: white; font-size: 14px; font-weight: 900; }
+.checkbox-label.checked .check-mark { display: block; }
+.checkbox-label.checked { border-color: var(--primary); background: var(--primary-light); }
+
+.receipt-info {
+    display: none;
+    margin-top: 14px;
+    background: var(--primary-light);
+    border: 1px dashed var(--primary);
+    border-radius: 10px;
+    padding: 18px;
+}
+.receipt-info.show { display: block; }
+.receipt-info p { font-size: 0.82rem; color: #a05010; margin-bottom: 12px; }
+.reg-inputs {
+    display: flex; align-items: center; gap: 8px;
+}
+.reg-inputs input {
+    flex: 1;
+    padding: 10px 12px;
+    border: 1.5px solid var(--primary-mid);
+    border-radius: 8px;
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 0.9rem;
+    background: var(--white);
+    outline: none;
+}
+.reg-inputs input:focus { border-color: var(--primary); }
+.reg-sep { color: var(--primary); font-weight: 700; font-size: 1.2rem; }
+
+/* ===== 결제 수단 ===== */
+.payment-methods {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+.method-card input[type="radio"] { display: none; }
+.method-card label {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 18px 20px;
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    cursor: pointer;
+    background: var(--bg);
+    font-weight: 600;
+    transition: all 0.2s;
+}
+.method-card label .method-icon { font-size: 26px; }
+.method-card label .method-desc { font-size: 0.76rem; color: #bbb; display: block; font-weight: 400; }
+.method-card input:checked + label {
+    border-color: var(--primary);
+    background: var(--primary-light);
+    color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(243,115,33,0.12);
+}
+.method-card input:checked + label .method-desc { color: #f5a96a; }
+
+.bank-guide {
+    display: none;
+    background: #fff9f5;
+    border: 1.5px dashed var(--primary);
+    border-radius: 10px;
+    padding: 18px 20px;
+    margin-top: 4px;
+}
+.bank-guide.show { display: block; }
+.bank-guide p { font-weight: 700; margin-bottom: 10px; color: var(--primary); }
+.bank-row { display: flex; gap: 24px; font-size: 0.9rem; color: #555; }
+.bank-row span { display: flex; align-items: center; gap: 6px; }
+
+/* ===== 요약 박스 ===== */
+.summary-box {
+    background: linear-gradient(135deg, var(--primary-light), #fff);
+    border: 2px solid var(--primary-mid);
+    border-radius: 14px;
+    padding: 22px 24px;
+    margin-bottom: 20px;
+}
+.summary-title {
+    font-size: 0.82rem;
+    color: var(--text-sub);
+    font-weight: 600;
+    margin-bottom: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+.summary-rows { display: flex; flex-direction: column; gap: 8px; }
+.summary-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.9rem;
+    color: #555;
+}
+.summary-row.total {
+    border-top: 1px solid var(--primary-mid);
+    padding-top: 10px;
+    margin-top: 4px;
+    font-size: 1.15rem;
+    font-weight: 900;
+    color: var(--primary);
+}
+
+/* ===== 제출 버튼 ===== */
+.submit-btn {
+    width: 100%;
+    padding: 20px;
+    background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+    color: var(--white);
+    border: none;
+    border-radius: 14px;
+    font-size: 1.15rem;
+    font-weight: 900;
+    font-family: 'Noto Sans KR', sans-serif;
+    cursor: pointer;
+    transition: all 0.25s;
+    box-shadow: 0 4px 18px rgba(243,115,33,0.35);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+.submit-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 28px rgba(243,115,33,0.45);
+}
+.submit-btn:active { transform: translateY(0); }
+
+/* ===== 안내 텍스트 ===== */
+.notice {
+    text-align: center;
+    font-size: 0.78rem;
+    color: #bbb;
+    margin-top: 14px;
+    line-height: 1.6;
+}
+.notice a { color: var(--primary); text-decoration: none; }
+
+/* ===== 성공 모달 ===== */
+.modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.45);
+    z-index: 9999;
+    align-items: center;
+    justify-content: center;
+}
+.modal-overlay.show { display: flex; }
+.modal-box {
+    background: var(--white);
+    border-radius: 20px;
+    padding: 48px 40px;
+    text-align: center;
+    max-width: 400px;
+    width: 90%;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+    animation: popIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+@keyframes popIn {
+    from { transform: scale(0.7); opacity: 0; }
+    to   { transform: scale(1);   opacity: 1; }
+}
+.modal-icon { font-size: 64px; color: var(--success); margin-bottom: 16px; }
+.modal-box h3 { font-size: 1.4rem; font-weight: 900; margin-bottom: 8px; }
+.modal-box p { color: var(--text-sub); font-size: 0.9rem; line-height: 1.6; margin-bottom: 24px; }
+.modal-btns { display: flex; gap: 10px; }
+.modal-btn {
+    flex: 1;
+    padding: 13px;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    font-family: 'Noto Sans KR', sans-serif;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+}
+.modal-btn.outline {
+    border: 2px solid var(--border);
+    background: var(--white);
+    color: var(--text-main);
+}
+.modal-btn.outline:hover { border-color: var(--primary); color: var(--primary); }
+.modal-btn.primary {
+    background: var(--primary);
+    color: var(--white);
+}
+.modal-btn.primary:hover { background: var(--primary-dark); }
+
+/* ===== 반응형 ===== */
+@media (max-width: 600px) {
+    .card { padding: 22px 18px; }
+    .amount-presets { grid-template-columns: repeat(2, 1fr); }
+    .input-row { grid-template-columns: 1fr; }
+    .payment-methods { grid-template-columns: 1fr; }
+    .type-tabs { grid-template-columns: 1fr 1fr; }
+}

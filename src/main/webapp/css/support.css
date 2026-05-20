@@ -1,0 +1,141 @@
+@charset "UTF-8";
+
+/* 1. 기본 배경 설정 (메인페이지와 통일) */
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #f8f6f2; /* 메인페이지 배경색 */
+    font-family: 'Pretendard', sans-serif;
+}
+
+/* 2. 본문 중앙 정렬 영역 */
+.main-content {
+    display: flex;
+    justify-content: center;
+    padding: 60px 24px;
+    min-height: 80vh;
+}
+
+/* 3. 문의 카드 스타일 (메인페이지 .hero-box 스타일 계승) */
+.inquiry-card {
+    width: 100%;
+    max-width: 900px;
+    background: linear-gradient(135deg, #fff8ef 0%, #fff 100%); /* 메인페이지 특유의 그라데이션 */
+    padding: 56px;
+    border-radius: 28px; /* 메인페이지와 동일한 곡률 */
+    border: 1px solid #f0e6d8;
+    box-shadow: 0 10px 24px rgba(0,0,0,0.04);
+}
+
+/* 4. 제목 및 설명 */
+.card-header h1 {
+    font-size: 36px;
+    font-weight: 800;
+    color: #1f2a44;
+    margin: 0 0 12px 0;
+}
+
+.card-header p {
+    font-size: 17px;
+    color: #6b7280;
+    margin-bottom: 40px;
+}
+
+/* 5. 입력창 스타일 */
+.input-group label {
+    display: block;
+    font-weight: 700;
+    margin-bottom: 10px;
+    color: #4b5563;
+}
+
+.form-control, .type-selector select {
+    width: 100%;
+    padding: 16px;
+    border: 1px solid #ece7df;
+    border-radius: 12px;
+    background-color: #ffffff;
+    font-size: 16px;
+    transition: all 0.3s;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: #e67e22;
+    box-shadow: 0 0 0 4px rgba(230, 126, 34, 0.1);
+}
+
+/* 6. 체크박스 및 기타 요소 */
+.form-row {
+    display: flex;
+    gap: 24px;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+/* 7. 등록 버튼 (메인 포인트 컬러) */
+.submit-btn {
+    width: 100%;
+    padding: 18px;
+    background-color: #e67e22;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 18px;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin-top: 32px;
+    transition: background 0.3s;
+}
+
+.submit-btn:hover {
+    background-color: #d65d10;
+}
+
+/* 미리보기 컨테이너: 가로 배치 */
+.preview-container {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 10px;
+}
+
+.img-wrapper {
+    position: relative;
+    width: 80px;
+    height: 80px;
+}
+
+.img-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+/* 삭제 버튼 (X) */
+.del-btn {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background: #ff4d4f;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* 유효성 메시지 스타일 */
+.msg { font-size: 13px; margin-top: 5px; display: block; }
+.msg.error { color: #ff4d4f; }
+.msg.success { color: #52c41a; }

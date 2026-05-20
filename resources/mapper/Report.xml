@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="report">
+
+    <!-- ========================= 유기동물 제보 ========================= -->
+
+    <!-- 제보 등록 -->
+    <insert id="insertAnimalReport" parameterType="AnimalReportVO">
+        INSERT INTO ANIMAL_REPORT (
+            REPORT_ID, MEMBER_ID, ANIMAL_TYPE, LOCATION,
+            STATUS, IMAGE_NAME, CONTENT, REPORT_DATE, PROCESS_YN, REPLY_EMAIL
+        ) VALUES (
+            SEQ_ANIMAL_REPORT.NEXTVAL,
+            #{memberId,   jdbcType=VARCHAR},
+            #{animalType, jdbcType=VARCHAR},
+            #{location,   jdbcType=VARCHAR},
+            #{status,     jdbcType=VARCHAR},
+            #{imageName,  jdbcType=VARCHAR},
+            #{content,    jdbcType=VARCHAR},
+            SYSDATE, 'N', 
+            #{replyEmail, jdbcType=VARCHAR}
+        )
+    </insert>
+
+    <!-- 제보 목록 -->
+    <select id="selectAnimalReportList" resultType="AnimalReportVO">
+        SELECT
+            REPORT_ID   AS reportId,
+            MEMBER_ID   AS memberId,
+            ANIMAL_TYPE AS animalType,
+            LOCATION    AS location,
+            STATUS      AS status,
+            IMAGE_NAME  AS imageName,
+            CONTENT     AS content,
+            REPORT_DATE AS reportDate,
+            PROCESS_YN  AS processYn,
+            REPLY_EMAIL  AS replyEmail
+        FROM ANIMAL_REPORT
+        ORDER BY REPORT_DATE DESC
+    </select>
+
+    <!-- 전체 건수 -->
+    <select id="selectAnimalReportCount" resultType="int">
+        SELECT COUNT(*) FROM ANIMAL_REPORT
+    </select>
+
+    <!-- 미처리 건수 -->
+    <select id="selectAnimalPendingCount" resultType="int">
+        SELECT COUNT(*) FROM ANIMAL_REPORT WHERE PROCESS_YN = 'N'
+    </select>
+
+    <!-- 처리 상태 변경 -->
+    <update id="updateAnimalReportProcess" parameterType="map">
+        UPDATE ANIMAL_REPORT
+        SET PROCESS_YN = #{processYn}
+        WHERE REPORT_ID = #{reportId}
+    </update>
+
+
+    <!-- ========================= 회원 신고 ========================= -->
+
+    <!-- 회원 신고 등록 -->
+    <insert id="insertMemberReport" parameterType="MemberReportVO">
+        INSERT INTO MEMBER_REPORT (
+            REPORT_ID, REPORTER_ID, TARGET_ID,
+            REASON, CONTENT, REPORT_DATE, STATUS, REPLY_EMAIL
+        ) VALUES (
+            SEQ_MEMBER_REPORT.NEXTVAL,
+            #{reporterId, jdbcType=VARCHAR},
+            #{targetId,   jdbcType=VARCHAR},
+            #{reason,     jdbcType=VARCHAR},
+            #{content,    jdbcType=VARCHAR},
+            SYSDATE, 'N',
+            #{replyEmail, jdbcType=VARCHAR}
+        )
+    </insert>
+
+    <!-- 회원 신고 목록 -->
+    <select id="selectMemberReportList" resultType="MemberReportVO">
+        SELECT
+            REPORT_ID   AS reportId,
+            REPORTER_ID AS reporterId,
+            TARGET_ID   AS targetId,
+            REASON      AS reason,
+            CONTENT     AS content,
+            REPORT_DATE AS reportDate,
+            STATUS      AS status,
+            REPLY_EMAIL  AS replyEmail
+        FROM MEMBER_REPORT
+        ORDER BY REPORT_DATE DESC
+    </select>
+
+    <!-- 전체 건수 -->
+    <select id="selectMemberReportCount" resultType="int">
+        SELECT COUNT(*) FROM MEMBER_REPORT
+    </select>
+
+    <!-- 미처리 건수 -->
+    <select id="selectMemberPendingCount" resultType="int">
+        SELECT COUNT(*) FROM MEMBER_REPORT WHERE STATUS = 'N'
+    </select>
+
+    <!-- 처리 상태 변경 -->
+    <update id="updateMemberReportStatus" parameterType="map">
+        UPDATE MEMBER_REPORT
+        SET STATUS = #{status}
+        WHERE REPORT_ID = #{reportId}
+    </update>
+
+</mapper>

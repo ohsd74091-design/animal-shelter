@@ -1,0 +1,290 @@
+/* =====================================================
+   mypageFavAnimal.css
+   관심동물(찜 목록) 페이지 전용 스타일
+   - 공통 스타일: common.css / mypage.css 참조
+   ===================================================== */
+
+/* --------------------------------------------------
+   페이지 헤더
+-------------------------------------------------- */
+.page-header {
+    margin-bottom: 2rem;
+}
+
+.page-title {
+    font-size: 1.875rem;   /* 30px */
+    font-weight: 900;
+    color: var(--color-text, #0d1117);
+    margin: 0 0 0.4rem;
+}
+
+.page-desc {
+    font-size: 0.9rem;
+    color: var(--color-text-muted, #64748b);
+    margin: 0;
+}
+
+
+/* --------------------------------------------------
+   카드 그리드
+-------------------------------------------------- */
+.fav-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+}
+
+@media (max-width: 1100px) {
+    .fav-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 640px) {
+    .fav-grid { grid-template-columns: 1fr; }
+}
+
+
+/* --------------------------------------------------
+   카드
+-------------------------------------------------- */
+.fav-card {
+    background: #fff;
+    border: 1px solid rgba(236, 91, 19, 0.1);
+    border-radius: 1rem;
+    overflow: hidden;
+    box-shadow: 0 1px 4px rgba(0,0,0,.06);
+    transition: box-shadow 0.3s, transform 0.3s;
+    display: flex;
+    flex-direction: column;
+}
+
+.fav-card:hover {
+    box-shadow: 0 8px 28px rgba(0,0,0,.12);
+    transform: translateY(-2px);
+}
+
+
+/* 이미지 래퍼 */
+.fav-card__img-wrap {
+    position: relative;
+    width: 100%;
+    height: 16rem;           /* 256px */
+    overflow: hidden;
+}
+
+.fav-card__img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s;
+}
+
+.fav-card:hover .fav-card__img {
+    transform: scale(1.05);
+}
+
+
+/* 찜(하트) 버튼 */
+.fav-card__wish-btn {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    width: 2.25rem;
+    height: 2.25rem;
+    border: none;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.92);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0,0,0,.15);
+    transition: background 0.2s, transform 0.2s;
+    color: #ef4444;   /* 빨간 하트 - 이미 찜한 상태 */
+}
+
+.fav-card__wish-btn .material-symbols-outlined {
+    font-variation-settings: 'FILL' 1;
+    font-size: 1.2rem;
+}
+
+.fav-card__wish-btn:hover {
+    background: #fff;
+    transform: scale(1.1);
+}
+
+/* 카드 전체 숨기기 애니메이션 (찜 해제 시) */
+.fav-card.removing {
+    opacity: 0;
+    transform: scale(0.95);
+    transition: opacity 0.3s, transform 0.3s;
+}
+
+
+/* 카드 본문 */
+.fav-card__body {
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    flex: 1;
+}
+
+.fav-card__name-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.fav-card__name {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin: 0;
+    color: var(--color-text, #0d1117);
+}
+
+.fav-card__meta {
+    font-size: 0.85rem;
+    color: var(--color-text-muted, #64748b);
+    margin: 0;
+}
+
+
+/* 태그 */
+.fav-card__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+}
+
+.fav-tag {
+    display: inline-block;
+    padding: 0.2rem 0.55rem;
+    border-radius: 0.4rem;
+    background: rgba(236, 91, 19, 0.1);
+    color: #ec5b13;
+    font-size: 0.78rem;
+    font-weight: 600;
+}
+
+
+/* 상세 보기 버튼 */
+.fav-card__btn {
+    display: block;
+    margin-top: auto;
+    padding: 0.75rem 0;
+    text-align: center;
+    background: #ec5b13;
+    color: #fff;
+    font-weight: 700;
+    font-size: 0.95rem;
+    border-radius: 0.75rem;
+    text-decoration: none;
+    transition: background 0.2s;
+}
+
+.fav-card__btn:hover {
+    background: #d44e0e;
+}
+
+
+/* --------------------------------------------------
+   페이지네이션
+-------------------------------------------------- */
+.pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    margin-top: 2.5rem;
+    margin-bottom: 1rem;
+}
+
+.page-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 0.6rem;
+    border: 1px solid rgba(236, 91, 19, 0.2);
+    background: #fff;
+    color: #475569;
+    font-size: 0.9rem;
+    font-weight: 500;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+}
+
+.page-btn:hover:not(:disabled):not(.page-btn--active) {
+    background: rgba(236, 91, 19, 0.06);
+    color: #ec5b13;
+}
+
+.page-btn--active {
+    background: #ec5b13;
+    color: #fff;
+    border-color: #ec5b13;
+    font-weight: 700;
+    box-shadow: 0 2px 8px rgba(236, 91, 19, 0.25);
+    cursor: default;
+}
+
+.page-btn--arrow {
+    color: #ec5b13;
+}
+
+.page-btn--arrow:disabled {
+    color: #cbd5e1;
+    border-color: #e2e8f0;
+    cursor: not-allowed;
+    background: #f8fafc;
+}
+
+.page-btn .material-symbols-outlined {
+    font-size: 1.2rem;
+}
+
+
+/* --------------------------------------------------
+   관심 동물 없을 때 (Empty State)
+-------------------------------------------------- */
+.fav-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 5rem 2rem;
+    text-align: center;
+    gap: 1rem;
+}
+
+.fav-empty__icon {
+    font-size: 4rem;
+    color: #cbd5e1;
+    font-variation-settings: 'FILL' 0;
+}
+
+.fav-empty__msg {
+    font-size: 1.05rem;
+    color: #94a3b8;
+    margin: 0;
+}
+
+.fav-empty__btn {
+    display: inline-block;
+    margin-top: 0.5rem;
+    padding: 0.7rem 1.6rem;
+    background: #ec5b13;
+    color: #fff;
+    border-radius: 9999px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-decoration: none;
+    transition: background 0.2s;
+}
+
+.fav-empty__btn:hover {
+    background: #d44e0e;
+}

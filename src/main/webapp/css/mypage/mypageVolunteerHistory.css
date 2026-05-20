@@ -1,0 +1,599 @@
+/* =====================================================
+   mypageVolunteerHistory.css
+   봉사 신청 내역 페이지 전용 스타일
+   - 공통: common.css / 사이드바 등: mypage.css 참조
+   ===================================================== */
+
+/* --------------------------------------------------
+   페이지 헤더
+-------------------------------------------------- */
+.page-header { margin-bottom: 1.5rem; }
+.page-title  { font-size: 1.875rem; font-weight: 900; color: #0d1117; margin: 0 0 0.4rem; }
+.page-desc   { font-size: 0.9rem; color: #64748b; margin: 0; }
+
+
+/* --------------------------------------------------
+   상단 그리드 (통계카드 + 달력)
+-------------------------------------------------- */
+.vol-top-grid {
+    display: grid;
+    grid-template-columns: 2fr 3fr;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+@media (max-width: 900px) {
+    .vol-top-grid { grid-template-columns: 1fr; }
+}
+
+
+/* --------------------------------------------------
+   통계 카드
+-------------------------------------------------- */
+.vol-stat-card {
+    position: relative;
+    overflow: hidden;
+    background: #fff;
+    border: 1px solid rgba(236,91,19,.08);
+    border-radius: 1rem;
+    padding: 2rem;
+    box-shadow: 0 1px 4px rgba(0,0,0,.05);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+/* 장식 원 */
+.vol-stat-card__deco {
+    position: absolute;
+    top: -3rem;
+    right: -3rem;
+    width: 9rem;
+    height: 9rem;
+    background: rgba(236,91,19,.05);
+    border-radius: 50%;
+    transition: transform 0.3s;
+}
+
+.vol-stat-card:hover .vol-stat-card__deco {
+    transform: scale(1.15);
+}
+
+.vol-stat-card__inner { position: relative; }
+
+.vol-stat-card__icon {
+    width: 3rem;
+    height: 3rem;
+    border-radius: 0.75rem;
+    background: rgba(236,91,19,.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ec5b13;
+    margin-bottom: 1rem;
+}
+
+.vol-stat-card__icon .material-symbols-outlined { font-size: 1.5rem; }
+
+.vol-stat-card__label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #64748b;
+    margin: 0 0 0.5rem;
+}
+
+.vol-stat-card__value {
+    display: flex;
+    align-items: baseline;
+    gap: 0.25rem;
+}
+
+.vol-stat-card__num {
+    font-size: 3rem;
+    font-weight: 700;
+    color: #ec5b13;
+    line-height: 1;
+}
+
+.vol-stat-card__unit {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #94a3b8;
+}
+
+.vol-stat-card__desc {
+    position: relative;
+    font-size: 0.78rem;
+    color: #94a3b8;
+    line-height: 1.6;
+    margin: 0;
+}
+
+
+/* --------------------------------------------------
+   달력
+-------------------------------------------------- */
+.vol-calendar {
+    background: #fff;
+    border: 1px solid rgba(236,91,19,.08);
+    border-radius: 1rem;
+    padding: 1.5rem;
+    box-shadow: 0 1px 4px rgba(0,0,0,.05);
+}
+
+.vol-calendar__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.25rem;
+}
+
+.vol-calendar__title {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 700;
+    font-size: 1rem;
+}
+
+.vol-calendar__title .material-symbols-outlined {
+    color: #ec5b13;
+    font-size: 1.2rem;
+}
+
+.vol-calendar__nav {
+    display: flex;
+    gap: 0.25rem;
+}
+
+.cal-nav-btn {
+    width: 1.75rem;
+    height: 1.75rem;
+    border: none;
+    background: transparent;
+    border-radius: 0.4rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: #94a3b8;
+    transition: background 0.15s;
+}
+
+.cal-nav-btn:hover {
+    background: #f1f5f9;
+    color: #475569;
+}
+
+.cal-nav-btn .material-symbols-outlined { font-size: 1.1rem; }
+
+/* 요일 헤더 */
+.vol-calendar__weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    text-align: center;
+    margin-bottom: 0.5rem;
+}
+
+.vol-calendar__weekdays span {
+    font-size: 0.65rem;
+    font-weight: 700;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 0.25rem 0;
+}
+
+/* 날짜 그리드 */
+.vol-calendar__grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 0.2rem;
+}
+
+.cal-day {
+    position: relative;
+    aspect-ratio: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    font-size: 0.8rem;
+    color: #374151;
+    cursor: pointer;
+    transition: background 0.15s;
+}
+
+.cal-day:hover:not(.cal-day--empty):not(.cal-day--has-event) {
+    background: #f8fafc;
+}
+
+.cal-day--empty { color: #cbd5e1; cursor: default; }
+
+/* 오늘 날짜 - 채워진 원 */
+.cal-day--today {
+    background: rgba(236,91,19,.15);
+    font-weight: 700;
+    color: #ec5b13;
+}
+
+/* 봉사 일정 있는 날 - 실선 원 */
+.cal-day--has-event {
+    background: rgba(236,91,19,.1);
+    border: 1px solid rgba(236,91,19,.2);
+    font-weight: 700;
+    color: #ec5b13;
+}
+
+/* 봉사 일정 있는 날 - 점 */
+.cal-day--has-event::after {
+    content: '';
+    position: absolute;
+    bottom: 0.2rem;
+    width: 0.3rem;
+    height: 0.3rem;
+    background: #ec5b13;
+    border-radius: 50%;
+}
+
+/* 오늘 + 봉사 일정 - 점 더 진하게 */
+.cal-day--today.cal-day--has-event::after {
+    width: 0.4rem;
+    height: 0.4rem;
+    background: #d44e0e;
+}
+
+/* 봉사완료 날 - 점선 원 */
+.cal-day--completed {
+    border: 2px dashed rgba(236,91,19,.4);
+    font-weight: 700;
+    color: #ec5b13;
+}
+
+.cal-day--completed::after {
+    content: '';
+    position: absolute;
+    bottom: 0.2rem;
+    width: 0.3rem;
+    height: 0.3rem;
+    background: rgba(236,91,19,.4);
+    border-radius: 50%;
+}
+
+/* 오늘 + 봉사완료 - 점 더 진하게 */
+.cal-day--today.cal-day--completed::after {
+    width: 0.4rem;
+    height: 0.4rem;
+    background: rgba(236,91,19,.8);
+}
+
+/* 달력 툴팁 */
+.cal-day__tooltip {
+    display: none;
+    position: absolute;
+    bottom: calc(100% + 0.4rem);
+    left: 50%;
+    transform: translateX(-50%);
+    width: 8rem;
+    padding: 0.4rem 0.6rem;
+    background: #1e293b;
+    color: #fff;
+    font-size: 0.7rem;
+    border-radius: 0.4rem;
+    text-align: center;
+    z-index: 10;
+    white-space: normal;
+    line-height: 1.4;
+    pointer-events: none;
+}
+
+.cal-day:hover .cal-day__tooltip { display: block; }
+
+
+/* --------------------------------------------------
+   신청 목록 섹션
+-------------------------------------------------- */
+.vol-list-section { display: flex; flex-direction: column; gap: 1rem; }
+
+.vol-list-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.vol-list-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #0d1117;
+    margin: 0;
+}
+
+.vol-filter-select {
+    font-size: 0.8rem;
+    padding: 0.4rem 0.75rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.5rem;
+    background: #fff;
+    color: #374151;
+    outline: none;
+    cursor: pointer;
+    font-family: inherit;
+    transition: border-color 0.15s;
+}
+
+.vol-filter-select:focus { border-color: #ec5b13; }
+
+
+/* --------------------------------------------------
+   봉사 카드
+-------------------------------------------------- */
+.vol-card-list { display: flex; flex-direction: column; gap: 0.75rem; }
+
+.vol-card {
+    background: #fff;
+    border: 1px solid rgba(236,91,19,.08);
+    border-radius: 1rem;
+    padding: 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    box-shadow: 0 1px 4px rgba(0,0,0,.04);
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.vol-card:hover:not(.is-cancelled) {
+    border-color: rgba(236,91,19,.3);
+    box-shadow: 0 4px 12px rgba(0,0,0,.07);
+}
+
+.vol-card.is-cancelled { opacity: 0.7; }
+
+
+/* 날짜 박스 */
+.vol-card__date-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-width: 4.5rem;
+    padding: 0.6rem 1rem;
+    background: #f8fafc;
+    border-radius: 0.75rem;
+    flex-shrink: 0;
+}
+
+.vol-card__date-month {
+    font-size: 0.65rem;
+    font-weight: 700;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.vol-card__date-day {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #0d1117;
+    line-height: 1.2;
+}
+
+
+/* 카드 본문 */
+.vol-card__body {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+}
+
+.vol-card__title-row {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+}
+
+.vol-card__title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #0d1117;
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.is-cancelled .vol-card__title { color: #94a3b8; }
+
+.vol-card__info {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+    font-size: 0.8rem;
+    color: #64748b;
+}
+
+.is-cancelled .vol-card__info { color: #94a3b8; }
+
+.vol-card__info-item {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    white-space: nowrap;
+}
+
+.vol-card__info-item .material-symbols-outlined { font-size: 0.9rem; }
+
+.vol-card__reject-reason {
+    font-size: 0.72rem;
+    color: #dc2626;
+    text-align: right;
+    width: 100%;
+    line-height: 1.4;
+    word-break: keep-all;
+}
+
+
+/* 상태 뱃지 */
+.vol-status-badge {
+    display: inline-block;
+    padding: 0.2rem 0.65rem;
+    border-radius: 9999px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.vol-status-badge--approved  { background: #dbeafe; color: #1d4ed8; }
+.vol-status-badge--pending   { background: #f1f5f9; color: #475569; }
+.vol-status-badge--rejected  { background: #fee2e2; color: #dc2626; }
+.vol-status-badge--complete  { background: #dcfce7; color: #16a34a; }
+
+
+/* 우측 액션 영역 */
+.vol-card__actions {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.5rem;
+    flex-shrink: 0;
+    min-width: 40%;
+}
+
+.vol-card__apply-date {
+    font-size: 0.72rem;
+    color: #94a3b8;
+    white-space: nowrap;
+}
+
+.vol-card__no-action {
+    font-size: 0.875rem;
+    color: #cbd5e1;
+    font-weight: 700;
+    padding: 0.5rem 1.25rem;
+}
+
+/* 버튼 */
+.btn-vol {
+    padding: 0.5rem 1.25rem;
+    border-radius: 9999px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    cursor: pointer;
+    text-decoration: none;
+    white-space: nowrap;
+    display: inline-block;
+    transition: background 0.2s, color 0.2s;
+    font-family: inherit;
+}
+
+/* 취소 버튼 */
+.btn-vol--cancel {
+    background: #fff;
+    color: #ec5b13;
+    border: 1px solid rgba(236,91,19,.25);
+}
+
+.btn-vol--cancel:hover {
+    background: #ec5b13;
+    color: #fff;
+}
+
+/* 후기작성 버튼 */
+.btn-vol--review {
+    background: #ec5b13;
+    color: #fff;
+    border: none;
+    box-shadow: 0 2px 6px rgba(236,91,19,.25);
+}
+
+.btn-vol--review:hover { background: #d44e0e; }
+
+
+/* --------------------------------------------------
+   페이지네이션 (후원내역과 동일)
+-------------------------------------------------- */
+.pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    margin-top: 1.5rem;
+}
+
+.page-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 0.5rem;
+    border: 1px solid #e2e8f0;
+    background: #fff;
+    color: #475569;
+    font-size: 0.8rem;
+    font-weight: 500;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+    font-family: inherit;
+}
+
+.page-btn:hover:not(:disabled):not(.page-btn--active) {
+    background: #f1f5f9;
+    color: #ec5b13;
+}
+
+.page-btn--active {
+    background: #ec5b13;
+    color: #fff;
+    border-color: #ec5b13;
+    font-weight: 700;
+    cursor: default;
+}
+
+.page-btn--arrow { color: #94a3b8; }
+
+.page-btn--arrow:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.page-btn .material-symbols-outlined { font-size: 1.1rem; }
+
+
+/* --------------------------------------------------
+   빈 상태
+-------------------------------------------------- */
+.vol-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 4rem 2rem;
+    gap: 0.75rem;
+}
+
+.vol-empty__icon { font-size: 3.5rem; color: #cbd5e1; }
+.vol-empty__msg  { font-size: 1rem; color: #94a3b8; margin: 0; }
+
+
+/* --------------------------------------------------
+   반응형
+-------------------------------------------------- */
+@media (max-width: 640px) {
+    .vol-card {
+        flex-wrap: wrap;
+    }
+
+    .vol-card__actions {
+        width: 100%;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+    }
+}

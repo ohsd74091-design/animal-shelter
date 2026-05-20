@@ -1,0 +1,686 @@
+@charset "UTF-8";
+
+/* ========================================
+   Admin Adoption Management
+   기존 admin-layout.css 색상 시스템 유지
+   ======================================== */
+
+/* ── 통계 카드 ── */
+.adp-stat-cards {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.adp-stat-card {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: #fff;
+    border: 1px solid #e4dbd6;
+    border-radius: 16px;
+    padding: 18px 20px;
+    box-shadow: 0 2px 12px rgba(50,46,43,0.05);
+}
+
+.adp-stat-card__icon {
+    width: 46px;
+    height: 46px;
+    border-radius: 13px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.adp-stat-card__icon--primary { background: #fff0e8; color: #9c3f00; }
+.adp-stat-card__icon--warn    { background: #fff8e1; color: #7a5400; }
+.adp-stat-card__icon--success { background: #e8faf0; color: #22c55e; }
+.adp-stat-card__icon--danger  { background: #fee2e2; color: #b02500; }
+.adp-stat-card__icon .material-symbols-outlined { font-size: 22px; }
+
+.adp-stat-card__label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    color: #7b7672;
+    margin-bottom: 2px;
+}
+
+.adp-stat-card__value {
+    display: block;
+    font-size: 26px;
+    font-weight: 800;
+    color: #322e2b;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.adp-stat-card__value--warn    { color: #7a5400; }
+.adp-stat-card__value--success { color: #22c55e; }
+.adp-stat-card__value--danger  { color: #b02500; }
+
+/* ── 필터 바 ── */
+.adp-filter-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.adp-filter-btns {
+    display: flex;
+    gap: 6px;
+}
+
+.adp-filter-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 16px;
+    border: 1.5px solid #e4dbd6;
+    border-radius: 999px;
+    background: #fff;
+    font-size: 13px;
+    font-weight: 600;
+    color: #5f5b57;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.adp-filter-btn:hover  { border-color: #9c3f00; color: #9c3f00; }
+.adp-filter-btn.active { background: #9c3f00; color: #fff; border-color: #9c3f00; }
+
+.adp-filter-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.adp-filter-dot--warn    { background: #f59e0b; }
+.adp-filter-dot--success { background: #22c55e; }
+.adp-filter-dot--danger  { background: #b02500; }
+
+.adp-search-box {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    border: 1.5px solid #e4dbd6;
+    border-radius: 999px;
+    background: #fff;
+    width: 260px;
+}
+
+.adp-search-box .material-symbols-outlined { font-size: 17px; color: #b2aca8; }
+
+.adp-search-box input {
+    border: none;
+    outline: none;
+    font-size: 13px;
+    background: transparent;
+    width: 100%;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    color: #322e2b;
+}
+
+.adp-search-box input::placeholder { color: #b2aca8; }
+
+/* ── 2단 레이아웃 ── */
+.adp-layout {
+    display: grid;
+    grid-template-columns: 340px 1fr;
+    gap: 20px;
+    height: calc(100vh - 370px);
+    min-height: 560px;
+}
+
+/* ── 좌: 카드 목록 패널 ── */
+.adp-list-panel {
+    background: #fff;
+    border: 1px solid #e4dbd6;
+    border-radius: 20px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.adp-list-scroll {
+    flex: 1;
+    overflow-y: auto;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* ── 신청 카드 ── */
+.adp-card {
+    padding: 16px;
+    border: 1.5px solid #f0ebe4;
+    border-radius: 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: #faf8f5;
+}
+
+.adp-card:hover {
+    border-color: #9c3f00;
+    background: #fff8f0;
+    transform: translateX(3px);
+    box-shadow: 0 2px 12px rgba(156,63,0,0.1);
+}
+
+.adp-card.active {
+    border-color: #9c3f00;
+    background: #fff3e8;
+    box-shadow: 0 2px 16px rgba(156,63,0,0.15);
+    border-left: 4px solid #9c3f00;
+}
+
+/* 심사중 카드 강조 */
+.adp-card--pending {
+    border-color: #f5c18a;
+    background: #fff;
+    box-shadow: 0 2px 8px rgba(156,63,0,0.08);
+}
+
+.adp-card__top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.adp-card__priority {
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 10px;
+    border-radius: 999px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.adp-card__priority--pending { background: #fff0e8; color: #9c3f00; border: 1px solid #f5c18a; }
+.adp-card__priority--normal  { background: #e4dbd6; color: #5f5b57; }
+
+.adp-card__id {
+    font-size: 11px;
+    font-weight: 600;
+    color: #b2aca8;
+}
+
+.adp-card__name {
+    font-size: 16px;
+    font-weight: 700;
+    color: #322e2b;
+    margin: 0 0 4px;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.adp-card__pet {
+    font-size: 13px;
+    color: #7b7672;
+    margin: 0 0 10px;
+}
+
+.adp-card__pet--highlight { color: #9c3f00; font-weight: 600; }
+
+.adp-card__footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 11px;
+    color: #b2aca8;
+    padding-top: 10px;
+    border-top: 1px solid #f0ebe4;
+}
+
+.adp-card__status {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-weight: 700;
+    font-size: 11px;
+}
+
+.adp-card__status-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+}
+
+.adp-card__status--pending  { color: #d97706; }
+.adp-card__status--pending .adp-card__status-dot { background: #d97706; }
+.adp-card__status--approved { color: #22c55e; }
+.adp-card__status--approved .adp-card__status-dot { background: #22c55e; }
+.adp-card__status--rejected { color: #b02500; }
+.adp-card__status--rejected .adp-card__status-dot { background: #b02500; }
+
+/* 빈 목록 */
+.adp-list-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    padding: 50px 20px;
+    color: #b2aca8;
+    font-size: 14px;
+}
+
+.adp-list-empty .material-symbols-outlined { font-size: 44px; color: #e4dbd6; }
+
+/* ── 우: 상세 패널 ── */
+.adp-detail-panel {
+    background: #fff;
+    border: 1px solid #e4dbd6;
+    border-radius: 20px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.adp-detail-empty {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    color: #b2aca8;
+    font-size: 14px;
+}
+
+.adp-detail-empty .material-symbols-outlined { font-size: 56px; color: #e4dbd6; }
+
+.adp-detail-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+/* 상세 헤더 */
+.adp-detail__header {
+    padding-bottom: 20px;
+    border-bottom: 1px solid #f0ebe4;
+}
+
+.adp-detail__badges {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+}
+
+.adp-priority-badge {
+    font-size: 10px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 999px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.adp-priority-badge--pending  { background: #fff0e8; color: #9c3f00; border: 1px solid #f5c18a; }
+.adp-priority-badge--approved { background: #e8faf0; color: #22c55e; }
+.adp-priority-badge--rejected { background: #fee2e2; color: #b02500; }
+
+.adp-detail__date {
+    font-size: 13px;
+    color: #7b7672;
+}
+
+.adp-detail__title {
+    font-size: 24px;
+    font-weight: 800;
+    color: #322e2b;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    margin: 0;
+}
+
+/* 섹션 공통 */
+.adp-detail__section {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.adp-detail__section-title {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 700;
+    color: #7b7672;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin: 0;
+}
+
+.adp-detail__section-title .material-symbols-outlined { font-size: 16px; color: #9c3f00; }
+
+/* 신청자 프로필 카드 */
+.adp-profile-card {
+    flex-direction: row !important;
+    align-items: center;
+    gap: 16px;
+    background: #faf8f5;
+    border-radius: 16px;
+    padding: 18px 20px;
+    border: 1px solid #f0ebe4;
+}
+
+.adp-profile-card__avatar {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 3px solid #f0ebe4;
+    flex-shrink: 0;
+}
+
+.adp-profile-card__avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.adp-profile-card__info h3 {
+    font-size: 18px;
+    font-weight: 800;
+    color: #322e2b;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    margin: 0 0 6px;
+}
+
+.adp-profile-card__tags {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.adp-tag {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 10px;
+    background: #e4dbd6;
+    color: #5f5b57;
+    border-radius: 6px;
+    text-transform: uppercase;
+}
+
+/* 정보 그리드 */
+.adp-info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+.adp-info-item {
+    background: #faf8f5;
+    border-radius: 12px;
+    padding: 12px 14px;
+}
+
+.adp-info-item__label {
+    display: block;
+    font-size: 11px;
+    font-weight: 700;
+    color: #7b7672;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 4px;
+}
+
+.adp-info-item__value {
+    font-size: 14px;
+    font-weight: 600;
+    color: #322e2b;
+}
+
+/* 입양 사유 blockquote */
+.adp-blockquote {
+    border-left: 4px solid #f5c18a;
+    padding: 14px 18px;
+    margin: 0;
+    background: #faf8f5;
+    border-radius: 0 12px 12px 0;
+    font-size: 14px;
+    color: #322e2b;
+    line-height: 1.7;
+    font-style: italic;
+}
+
+/* 동물 카드 */
+.adp-pet-card {
+    flex-direction: row !important;
+    gap: 20px;
+    background: #fff;
+    border: 1px solid #f0ebe4;
+    border-radius: 16px;
+    overflow: hidden;
+    padding: 0 !important;
+}
+
+.adp-pet-card__img-wrap {
+    position: relative;
+    width: 160px;
+    flex-shrink: 0;
+}
+
+.adp-pet-card__img-wrap img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    min-height: 200px;
+}
+
+.adp-pet-card__badge {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 3px 10px;
+    background: #9c3f00;
+    color: #fff;
+    border-radius: 999px;
+    text-transform: uppercase;
+}
+
+.adp-pet-card__info {
+    padding: 18px 18px 18px 0;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.adp-pet-card__info h3 {
+    font-size: 20px;
+    font-weight: 800;
+    color: #322e2b;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    margin: 0;
+}
+
+.adp-pet-card__info p {
+    font-size: 13px;
+    color: #7b7672;
+    margin: 0;
+}
+
+.adp-pet-card__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.adp-pet-tag {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 10px;
+    background: #f0ebe4;
+    color: #5f5b57;
+    border-radius: 999px;
+}
+
+.adp-pet-card__visit {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: #faf8f5;
+    border-radius: 10px;
+    padding: 10px 14px;
+    margin-top: auto;
+}
+
+.adp-pet-card__visit .material-symbols-outlined { font-size: 20px; color: #9c3f00; }
+
+.adp-pet-card__visit-label {
+    font-size: 10px;
+    font-weight: 700;
+    color: #7b7672;
+    text-transform: uppercase;
+    margin: 0 0 2px;
+}
+
+.adp-pet-card__visit-date {
+    font-size: 14px;
+    font-weight: 800;
+    color: #322e2b;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    margin: 0;
+}
+
+/* 처리 액션 */
+.adp-detail__action {
+    background: #faf8f5;
+    border-radius: 16px;
+    padding: 20px;
+    border: 1px solid #f0ebe4;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.adp-action-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    padding: 14px;
+    border: none;
+    border-radius: 999px;
+    font-size: 15px;
+    font-weight: 700;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.adp-action-btn .material-symbols-outlined { font-size: 18px; }
+
+.adp-action-btn--approve {
+    background: #9c3f00;
+    color: #fff;
+    box-shadow: 0 4px 14px rgba(156,63,0,0.25);
+}
+
+.adp-action-btn--approve:hover {
+    background: #7a3000;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 18px rgba(156,63,0,0.35);
+}
+
+.adp-reject-area {
+    padding-top: 8px;
+    border-top: 1px solid #e4dbd6;
+}
+
+.adp-reject-label {
+    display: block;
+    font-size: 12px;
+    font-weight: 700;
+    color: #7b7672;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+}
+
+.adp-reject-textarea {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1.5px solid #e4dbd6;
+    border-radius: 12px;
+    font-size: 13px;
+    font-family: inherit;
+    color: #322e2b;
+    background: #fff;
+    box-sizing: border-box;
+    resize: none;
+    transition: border-color 0.2s;
+}
+
+.adp-reject-textarea:focus {
+    outline: none;
+    border-color: #b02500;
+    box-shadow: 0 0 0 3px rgba(176,37,0,0.08);
+}
+
+.adp-action-btn--reject {
+    background: transparent;
+    color: #b02500;
+    border: 1.5px solid #fca5a5;
+}
+
+.adp-action-btn--reject:hover {
+    background: #fee2e2;
+    border-color: #b02500;
+}
+
+.adp-action-note {
+    font-size: 11px;
+    color: #b2aca8;
+    text-align: center;
+    font-style: italic;
+    margin: 0;
+}
+
+/* 반려 사유 표시 */
+.adp-detail__reject-result {
+    background: #fff5f5;
+    border: 1px solid #fca5a5;
+    border-radius: 12px;
+    padding: 16px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.adp-detail__reject-result p {
+    font-size: 14px;
+    color: #b02500;
+    margin: 0;
+    line-height: 1.6;
+}
+
+/* ── 반응형 ── */
+@media (max-width: 1300px) {
+    .adp-stat-cards { grid-template-columns: repeat(2, 1fr); }
+    .adp-layout { grid-template-columns: 1fr; height: auto; }
+}
+
+/* Leaflet 지도 z-index 충돌 방지 */
+.leaflet-pane,
+.leaflet-top,
+.leaflet-bottom { z-index: 1 !important; }
+
+.adp-map-section { flex-direction: column; gap: 10px; }

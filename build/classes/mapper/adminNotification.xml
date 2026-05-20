@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="adminNotification">
+
+    <select id="selectAnimalPendingCount" resultType="int">
+        SELECT COUNT(*)
+        FROM ANIMAL_REPORT
+        WHERE PROCESS_YN = 'N'
+    </select>
+
+    <select id="selectMemberReportPendingCount" resultType="int">
+        SELECT COUNT(*)
+        FROM MEMBER_REPORT
+        WHERE STATUS = 'N'
+    </select>
+
+    <select id="selectSupportPendingCount" resultType="int">
+        SELECT COUNT(*)
+        FROM SUPPORT
+        WHERE STATUS = 'N'
+    </select>
+
+</mapper>

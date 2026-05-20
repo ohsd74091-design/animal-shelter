@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="certificate">
+
+    <select id="selectAdoptionCertificate"
+            parameterType="map"
+            resultType="kr.or.ddit.certificate.vo.AdoptionCertificateVO">
+
+        SELECT
+            A.ADOPTION_ID                                        AS adoptionId,
+
+            'APP-' || TO_CHAR(SYSDATE, 'YYYY') || '-' ||
+            LPAD(A.ADOPTION_ID, 5, '0')                          AS approvalNo,
+
+            TO_CHAR(SYSDATE, 'YYYY-MM-DD')                       AS approvalDate,
+
+            A.MEMBER_ID                                          AS memberId,
+            TO_CHAR(A.APPLY_DATE, 'YYYY-MM-DD')                   AS applyDate,
+            TO_CHAR(A.VISIT_DATE, 'YYYY-MM-DD')                   AS visitDate,
+            A.STATUS                                             AS status,
+
+            M.MEMBER_NAME                                        AS memberName,
+            M.PHONE                                              AS phone,
+
+            AD.JOB                                               AS job,
+            DBMS_LOB.SUBSTR(AD.ADDRESS, 4000, 1)                AS address,
+
+            AN.ANIMAL_ID                                         AS animalId,
+            AN.ANIMAL_NAME                                       AS animalName,
+            AN.BREED                                             AS breed,
+            AN.GENDER                                            AS gender,
+            AN.AGE                                               AS age,
+
+            AM.NEUTERED                                          AS neutered,
+
+            TO_CHAR(AR.RESCUE_DATE, 'YYYY-MM-DD')                AS rescueDate
+
+        FROM ADOPTION A
+        JOIN MEMBER M ON A.MEMBER_ID = M.MEMBER_ID
+        LEFT JOIN ADOPTION_DETAIL AD ON A.ADOPTION_ID = AD.ADOPTION_ID
+        JOIN ANIMAL AN ON A.ANIMAL_ID = AN.ANIMAL_ID
+        LEFT JOIN ANIMAL_MEDICAL AM ON AN.ANIMAL_ID = AM.ANIMAL_ID
+        LEFT JOIN ANIMAL_RESCUE AR ON AN.ANIMAL_ID = AR.ANIMAL_ID
+
+        WHERE A.ADOPTION_ID = #{adoptionId}
+          AND A.MEMBER_ID = #{memberId}
+          AND A.STATUS = '승인'
+
+    </select>
+
+</mapper>

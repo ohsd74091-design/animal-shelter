@@ -1,0 +1,321 @@
+/* 1. 기본 배경 및 레이아웃 */
+body {
+    background-color: #f8f9fa; /* 연한 회색 배경 */
+    margin: 0;
+    padding: 0;
+}
+
+.admin-main-wrap {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    background-color: #f6f7fb;
+}
+
+/* 2. 리스트를 중앙 상단으로 올리는 핵심 컨테이너 */
+.inquiry-wrapper, 
+.detail-wrapper{
+    width: 95%;          /* 가로 너비 */
+    max-width: 1200px;   /* 최대 너비 제한 */
+   	margin: 20px auto; /* 헤더가 sticky이므로 적절한 간격 유지 */
+    padding: 0 20px 40px 20px;
+}
+
+/* 3. 카드(표를 감싸는 상자) 스타일 */
+.card {
+    background: #ffffff;
+    border-radius: 15px; /* 둥근 모서리 */
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05); /* 부드러운 그림자 */
+    border: 1px solid #eef0f2;
+    overflow: hidden;
+    margin-top: 10px;
+}
+
+.card-header {
+    padding: 20px 25px;
+    border-bottom: 1px solid #f1dcb8;       /* 오렌지 계열 구분선 */
+    background-color: #fff4e5;              /* ✅ 연한 오렌지 배경 */
+    border-radius: 15px 15px 0 0;
+}
+
+/* 4. 테이블(표) 스타일 */
+.inquiry-table {
+    width: 100%;
+    border-collapse: collapse; /* 테두리 겹침 방지 */
+}
+
+.inquiry-table th {
+    background-color: #fafbfc;
+    color: #666;
+    font-size: 13px;
+    text-transform: uppercase;
+    padding: 15px 20px;
+    border-bottom: 2px solid #eee;
+    text-align: left;
+}
+
+.inquiry-table td {
+    padding: 18px 20px;
+    font-size: 14px;
+    color: #444;
+    border-bottom: 1px solid #f8f8f8;
+}
+
+
+
+/* 제목 텍스트 강조 */
+.font-medium {
+    font-size: 16px; /* 제목 글자 크기 키움 */
+    font-weight: 600;
+    color: #333;
+}
+
+/* 행 클릭 시 효과 */
+.inquiry-table tr {
+    transition: background-color 0.2s ease;
+    cursor: pointer;
+}
+
+.inquiry-table tr:hover {
+    background-color: #fff9f3; /* 따뜻한 오렌지빛 강조색 */
+}
+
+/* 5. 상태 배지 디자인 */
+.badge {
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.status-waiting {
+    background-color: #fff4e5;
+    color: #ef8c2b; /* 대기 중 오렌지색 */
+}
+
+.status-complete {
+    background-color: #f1f3f5;
+    color: #868e96; /* 완료 회색 */
+}
+
+/* 상세 내용 행 스타일 */
+.detail-row {
+    background-color: #fcfcfc; /* 리스트와 구분되는 연한 배경색 */
+}
+
+.detail-inner {
+    padding: 20px 40px;
+    border-left: 4px solid #ee8c2b; /* 포인트 컬러로 강조 */
+    text-align: left;
+}
+
+.detail-inner p {
+    margin-bottom: 15px;
+    color: #555;
+    line-height: 1.6;
+}
+
+/* 답변하러 가기 버튼 */
+.btn-go {
+    background-color: #10A37F;
+    color: white;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.btn-go:hover {
+    background-color: #ee8c2b;
+}
+
+/* 클릭 가능한 행임을 표시 */
+.main-row {
+    cursor: pointer;
+}
+
+/* --- 상세 페이지 전용 스타일 --- */
+
+/* 상세 페이지 메인 컨테이너 */
+.detail-wrapper {
+    width: 95%;
+    max-width: 900px; /* 리스트보다 조금 좁게 설정하여 가독성 높임 */
+    margin: 20px auto;
+}
+
+/* 뒤로가기 버튼 */
+.btn-back {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    color: #6F2D11;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+    margin-bottom: 15px;
+    transition: color 0.2s;
+}
+
+.btn-back:hover { color: #ee8c2b; }
+
+/* 문의 내용 박스 */
+.content-box {
+    background-color: #f8f9fa;
+    padding: 25px;
+    border-radius: 12px;
+    margin: 20px 0;
+}
+
+.author-info {
+    font-weight: bold;
+    font-size: 15px;
+    color: #333;
+    display: flex;
+    justify-content: space-between;
+}
+
+.content-text {
+    line-height: 1.8;
+    color: #444;
+    margin-top: 15px;
+    white-space: pre-wrap; /* 줄바꿈 유지 */
+}
+
+/* 이미지 갤러리 */
+.image-gallery {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 30px;
+}
+
+.img-placeholder {
+    width: 140px;
+    height: 140px;
+    background-color: #eee;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #aaa;
+    font-size: 12px;
+    border: 1px dashed #ccc;
+}
+
+/* 답변 입력창 */
+.reply-section {
+    border-top: 1px solid #eee;
+    padding-top: 30px;
+}
+
+.reply-area {
+    width: 100%;
+    height: 180px;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 15px;
+    font-family: inherit;
+    resize: none;
+    transition: border-color 0.2s;
+}
+
+.reply-area:focus {
+    outline: none;
+    border-color: #ee8c2b;
+}
+
+.btn-submit {
+    width: 100%;
+    background-color: #ee8c2b;
+    color: white;
+    padding: 15px;
+    border-radius: 10px;
+    border: none;
+    font-weight: bold;
+    font-size: 16px;
+    margin-top: 15px;
+    cursor: pointer;
+    transition: opacity 0.2s;
+}
+
+.btn-submit:hover { opacity: 0.9; }
+
+/* 헤더 배치: 필터 왼쪽, 제목 오른쪽 */
+.admin-header-flex {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 25px;
+    background-color: #FAF6ED;              /* ✅ 카드 헤더와 동일하게 */
+}
+
+.header-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #6F2D11;                       
+}
+
+.filter-area {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.admin-select {
+    padding: 6px 12px;
+    border: 1px solid #f0c080;              /* ✅ 오렌지 계열 테두리 */
+    border-radius: 6px;
+    background-color: #ffffff;
+    color: #555;
+    outline: none;
+    cursor: pointer;
+}
+.admin-select:focus {
+    border-color: #ee8c2b;
+}
+
+/* 페이징 스타일 */
+.pagination-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 30px;
+}
+
+.pagination {
+    display: flex;
+    list-style: none;
+    padding: 0;
+}
+
+.page-item {
+    margin: 0 3px;
+}
+
+.page-link {
+    display: block;
+    padding: 6px 10px;
+    border: 1px solid #dee2e6;
+    color: #555;
+    text-decoration: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.page-item.active .page-link {
+    background-color: #D86126; /* 포인트 컬러 */
+    border-color: #ff9d00;
+    color: white;
+    font-weight: bold;
+}
+
+.page-link:hover:not(.active) {
+    background-color: #eee;
+}
+
+/* 관리자 문의 상세 내용 및 등록된 답변 줄바꿈 유지 */
+.detail-content-box p,
+.reply-item p {
+    white-space: pre-wrap;
+    word-break: break-all; /* 긴 단어가 영역을 벗어나지 않게 줄바꿈 */
+}

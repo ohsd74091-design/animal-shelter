@@ -1,0 +1,468 @@
+/* =============================================
+   mypage.css
+   마이페이지 전용 스타일
+   (공통 스타일은 common/common.css 에서 관리)
+   ============================================= */
+
+/* ---------- 레이아웃 ---------- */
+.mypage-container {
+    display: flex;
+    gap: 2rem;
+    max-width: 1200px;
+    margin: 2.5rem auto;
+    padding: 0 1.5rem;
+    align-items: flex-start;
+}
+
+/* =============================================
+   SIDEBAR
+   ============================================= */
+.mypage-sidebar {
+    width: 240px;
+    flex-shrink: 0;
+    background: #fff;
+    border-radius: 16px;
+    border: 1px solid #f1f1f1;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,.05);
+}
+
+
+/* 내비게이션 링크 */
+.sidebar-nav {
+    padding: 1rem 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar-nav a {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    padding: 0.75rem 1.25rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #555;
+    text-decoration: none;
+    transition: background 0.15s, color 0.15s;
+}
+
+.sidebar-nav a .material-symbols-outlined {
+    font-size: 1.125rem;
+    color: #aaa;
+    transition: color 0.15s;
+}
+
+.sidebar-nav a:hover {
+    background: #fff5f0;
+    color: #ec5b13;
+}
+
+.sidebar-nav a:hover .material-symbols-outlined {
+    color: #ec5b13;
+}
+
+.sidebar-nav a.active {
+    background: #ec5b13;
+    color: #fff;
+    font-weight: 600;
+}
+
+.sidebar-nav a.active .material-symbols-outlined {
+    color: #fff;
+    font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}
+
+/* =============================================
+   CONTENT 영역
+   ============================================= */
+.mypage-content {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+/* ---------- 웰컴 배너 ---------- */
+.welcome-banner {
+    display: flex;
+    align-items: center;
+    gap: 1.75rem;
+    background: #fff;
+    border-radius: 16px;
+    padding: 2rem;
+    border: 1px solid #f1f1f1;
+    box-shadow: 0 2px 8px rgba(0,0,0,.05);
+    position: relative;
+    overflow: hidden;
+}
+
+/* 장식용 원 */
+.welcome-banner::after {
+    content: '';
+    position: absolute;
+    top: -4rem;
+    right: -4rem;
+    width: 14rem;
+    height: 14rem;
+    background: rgba(236,91,19,.06);
+    border-radius: 50%;
+    pointer-events: none;
+}
+
+.welcome-avatar {
+    width: 96px;
+    height: 96px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 4px solid #fff;
+    box-shadow: 0 4px 16px rgba(0,0,0,.12);
+    flex-shrink: 0;
+    position: relative;
+    z-index: 1;
+}
+
+.welcome-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.welcome-info {
+    position: relative;
+    z-index: 1;
+}
+
+.welcome-info h2 {
+    font-size: 1.375rem;
+    font-weight: 700;
+    color: #111;
+    margin-bottom: 0.3rem;
+}
+
+.welcome-info h2 .highlight {
+    color: #ec5b13;
+}
+
+.welcome-info .id {
+    font-size: 0.875rem;
+    color: #888;
+    font-weight: 500;
+    margin-bottom: 0.3rem;
+}
+
+.welcome-info .email {
+    font-size: 0.875rem;
+    color: #888;
+    font-weight: 500;
+    margin-bottom: 0.75rem;
+}
+
+.welcome-meta {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    font-size: 0.8125rem;
+    color: #aaa;
+}
+
+.welcome-meta--compact {
+    margin-bottom: 0.75rem;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.15rem;
+}
+
+.welcome-meta span {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.welcome-meta .material-symbols-outlined {
+    font-size: 0.875rem;
+}
+
+/* ---------- 통계 카드 ---------- */
+.stat-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+}
+
+.stat-card {
+    background: #fff;
+    border-radius: 16px;
+    padding: 1.5rem;
+    border: 1px solid #f1f1f1;
+    box-shadow: 0 2px 8px rgba(0,0,0,.05);
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    position: relative;
+    transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+    cursor: pointer;
+}
+
+.stat-card:hover {
+    border-color: rgba(236,91,19,.35);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(236,91,19,.1);
+}
+
+.stat-icon {
+    width: 48px;
+    height: 48px;
+    background: rgba(236,91,19,.1);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ec5b13;
+    margin-bottom: 0.75rem;
+    transition: transform 0.2s;
+}
+
+.stat-card:hover .stat-icon {
+    transform: scale(1.08);
+}
+
+.stat-icon .material-symbols-outlined {
+    font-size: 1.375rem;
+}
+
+.stat-label {
+	display: block;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: #888;
+}
+
+.stat-value {
+	display: block;
+    font-size: 2rem;
+    font-weight: 700;
+    color: #111;
+    line-height: 1;
+}
+
+.stat-arrow {
+    position: absolute;
+    top: 1.5rem;
+    right: 1.25rem;
+    font-size: 0.875rem;
+    color: #ccc;
+}
+
+/* ---------- 최근 활동 ---------- */
+.activity-section {
+    background: #fff;
+    border-radius: 16px;
+    padding: 1.75rem 2rem;
+    border: 1px solid #f1f1f1;
+    box-shadow: 0 2px 8px rgba(0,0,0,.05);
+}
+
+.activity-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.25rem;
+}
+
+.activity-header h3 {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #111;
+}
+
+.btn-view-all {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #ec5b13;
+    text-decoration: none;
+    transition: opacity 0.15s;
+}
+
+.btn-view-all:hover {
+    opacity: 0.75;
+}
+
+.activity-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.activity-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 1.25rem;
+    border-radius: 12px;
+    border: 1px solid #f1f1f1;
+    transition: background 0.15s;
+}
+
+.activity-item:hover {
+    background: #fff5f0;
+}
+
+.activity-left {
+    display: flex;
+    align-items: center;
+    gap: 0.875rem;
+}
+
+.activity-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: #f4f4f4;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #888;
+    flex-shrink: 0;
+}
+
+.activity-icon .material-symbols-outlined {
+    font-size: 1.125rem;
+}
+
+/* 타입별 아이콘 색상 */
+.activity-icon--primary {
+    background: rgba(236,91,19,.1);
+    color: #ec5b13;
+}
+
+.activity-icon--green {
+    background: #dcfce7;
+    color: #16a34a;
+}
+
+.activity-icon--blue {
+    background: #dbeafe;
+    color: #2563eb;
+}
+
+.activity-icon--red {
+    background: #fee2e2;
+    color: #dc2626;
+}
+
+.activity-icon--emerald {
+    background: rgba(236,91,19,.1);
+    color: #ec5b13;
+}
+
+.activity-icon--orange {
+    background: rgba(236,91,19,.1);
+    color: #ec5b13;
+}
+
+.activity-icon--pink {
+    background: #fce7f3;
+    color: #db2777;
+}
+
+.activity-desc {
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: #222;
+    margin-bottom: 0.2rem;
+}
+
+.activity-date {
+    font-size: 0.75rem;
+    color: #aaa;
+}
+
+/* 뱃지 */
+.badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.badge-primary {
+    background: rgba(236,91,19,.1);
+    color: #ec5b13;
+}
+
+.badge-green {
+    background: #dcfce7;
+    color: #16a34a;
+}
+
+.badge-blue {
+    background: #dbeafe;
+    color: #2563eb;
+}
+
+.badge-gray {
+    background: #f1f5f9;
+    color: #64748b;
+}
+
+.badge-red {
+    background: #fee2e2;
+    color: #dc2626;
+}
+
+.badge-emerald {
+    background: rgba(236,91,19,.1);
+    color: #ec5b13;
+}
+
+.badge-pink {
+    background: #fce7f3;
+    color: #db2777;
+}
+
+/* ---------- 데이터 없을 때 ---------- */
+.no-data {
+    padding: 2.5rem;
+    text-align: center;
+    color: #aaa;
+    font-size: 0.9375rem;
+}
+
+/* =============================================
+   반응형
+   ============================================= */
+@media (max-width: 900px) {
+    .mypage-container {
+        flex-direction: column;
+    }
+
+    .mypage-sidebar {
+        width: 100%;
+    }
+
+    .stat-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 560px) {
+    .stat-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .welcome-banner {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .welcome-meta {
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+}

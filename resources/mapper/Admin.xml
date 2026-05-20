@@ -1,0 +1,1045 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+
+<mapper namespace="admin">
+
+<!-- =====================================================   
+     역할: ADOPTION + ADOPTION_DETAIL + ANIMAL + MEMBER 
+           4개 테이블 JOIN 결과를 AdoptionVO 객체로 매핑
+           AdoptionDetailVO는 AdoptionVO.detail 필드에 중첩 매핑
+     ===================================================== -->
+
+<resultMap id="adoptionResultMap" type="AdoptionVO">
+    <!-- ADOPTION 테이블 기본 필드 -->
+    <id     property="adoptionId"   column="adoptionId"/>
+    <result property="memberId"     column="memberId"/>
+    <result property="animalId"     column="animalId"/>
+    <result property="visitDate"    column="visitDate"/>
+    <result property="applyDate"    column="applyDate"/>
+    <result property="status"       column="status"/>
+    <result property="rejectReason" column="rejectReason"/>
+ 
+    <!-- ANIMAL 테이블 JOIN 필드 -->
+    <result property="animalName"   column="animalName"/>
+    <result property="animalType"   column="animalType"/>
+    <result property="breed"        column="breed"/>
+    <result property="age"          column="age"/>
+    <result property="personality"  column="personality"/>
+ 
+    <!-- ANIMAL_IMAGE 테이블 JOIN 필드 (IS_MAIN='Y' 인 대표 이미지) -->
+    <result property="mainImage"    column="mainImage"/>
+ 
+    <!-- MEMBER 테이블 JOIN 필드 (신청자 프로필 이미지) -->
+    <result property="profileImg"   column="profileImg"/>
+ 
+    <!-- ADOPTION_DETAIL 테이블 → AdoptionVO.detail 중첩 객체로 매핑
+         detail이 null이면 JSP에서 empty 체크 후 접근 -->
+    <association property="detail" javaType="AdoptionDetailVO">
+        <result property="job"            column="job"/>
+        <result property="housingType"    column="housingType"/>
+        <result property="petExperience"  column="petExperience"/>
+        <result property="address"        column="address"/>
+        <result property="adoptionReason" column="adoptionReason"/>
+    </association>
+</resultMap>
+
+
+<resultMap type="kr.or.ddit.adoption.vo.AdoptionVO" id="adminAdoptionHistoryMap">
+    <id     column="ADOPTION_ID"    property="adoptionId"/>
+    <result column="MEMBER_ID"      property="memberId"/>
+    <result column="ANIMAL_ID"      property="animalId"/>
+    <result column="VISIT_DATE"     property="visitDate"/>
+    <result column="APPLY_DATE"     property="applyDate"/>
+    <result column="STATUS"         property="status"/>
+    <result column="REJECT_REASON"  property="rejectReason"/>
+
+    <!-- MEMBER -->
+    <result column="MEMBER_NAME"    property="memberName"/>
+    <result column="NICKNAME"       property="nickname"/>
+    <result column="EMAIL"          property="email"/>
+    <result column="PHONE"          property="phone"/>
+    <result column="PROFILE_IMG"    property="profileImg"/>
+
+    <!-- ANIMAL -->
+    <result column="ANIMAL_NAME"     property="animalName"/>
+    <result column="ANIMAL_TYPE"     property="animalType"/>
+    <result column="BREED"           property="breed"/>
+    <result column="AGE"             property="age"/>
+    <result column="GENDER"          property="gender"/>
+    <result column="ADOPTION_STATUS" property="adoptionStatus"/>
+    <result column="PERSONALITY"     property="personality"/>
+    <result column="MAIN_IMAGE"      property="mainImage"/>
+
+    <!-- ADOPTION_DETAIL -->
+    <association property="detail" javaType="kr.or.ddit.adoption.vo.AdoptionDetailVO">
+        <id     column="ADOPTION_ID"     property="adoptionId"/>
+        <result column="JOB"             property="job"/>
+        <result column="HOUSING_TYPE"    property="housingType"/>
+        <result column="PET_EXPERIENCE"  property="petExperience"/>
+        <result column="ADDRESS"         property="address"/>
+        <result column="ADOPTION_REASON" property="adoptionReason"/>
+    </association>
+</resultMap>
+
+<!-- =====================================================
+	 역할: 관리자 입양 신청 관리 페이지에서 사용하는 쿼리 모음
+           - 목록 조회 / 건수 조회 / 상태 업데이트
+     ===================================================== -->
+ 
+ 
+<!-- ─────────────────────────────────────────────────────
+     [selectAdoptionList]
+     역할: 입양 신청 전체 목록 조회 (최신순 정렬)
+     사용: AdminAdoptionController → 목록 페이지 진입 시
+     JOIN: ADOPTION + ADOPTION_DETAIL + ANIMAL + ANIMAL_IMAGE + MEMBER
+     반환: List<AdoptionVO> (detail 중첩 포함)
+     ───────────────────────────────────────────────────── -->
+<select id="selectAdoptionList" resultMap="adoptionResultMap">
+    SELECT
+        A.ADOPTION_ID                        AS adoptionId,
+        A.MEMBER_ID                          AS memberId,
+        A.ANIMAL_ID                          AS animalId,
+        A.VISIT_DATE AS visitDate,
+		A.APPLY_DATE AS applyDate,
+        A.STATUS                             AS status,
+        A.REJECT_REASON                      AS rejectReason,
+        AN.ANIMAL_NAME                       AS animalName,
+        AN.ANIMAL_TYPE                       AS animalType,
+        AN.BREED                             AS breed,
+        AN.AGE                               AS age,
+        AN.PERSONALITY                       AS personality,
+        AI.SAVE_FILE_NAME                    AS mainImage,
+        M.PROFILE_IMG                        AS profileImg,
+        D.JOB                                AS job,
+        D.HOUSING_TYPE                       AS housingType,
+        D.PET_EXPERIENCE                     AS petExperience,
+        D.ADDRESS                            AS address,
+        D.ADOPTION_REASON                    AS adoptionReason
+    FROM ADOPTION A
+    LEFT JOIN ANIMAL          AN ON A.ANIMAL_ID   = AN.ANIMAL_ID
+    LEFT JOIN ANIMAL_IMAGE    AI ON AN.ANIMAL_ID  = AI.ANIMAL_ID AND AI.IS_MAIN = 'Y'
+    LEFT JOIN MEMBER          M  ON A.MEMBER_ID   = M.MEMBER_ID
+    LEFT JOIN ADOPTION_DETAIL D  ON A.ADOPTION_ID = D.ADOPTION_ID
+    ORDER BY A.APPLY_DATE DESC
+</select>
+ 
+ 
+<!-- ─────────────────────────────────────────────────────
+     [selectAdoptionTotalCount]
+     역할: 전체 입양 신청 건수 조회
+     사용: AdminAdoptionController → 통계 카드 "전체 신청" 숫자
+     반환: int
+     ───────────────────────────────────────────────────── -->
+<select id="selectAdoptionTotalCount" resultType="int">
+    SELECT COUNT(*) FROM ADOPTION
+</select>
+ 
+ 
+<!-- ─────────────────────────────────────────────────────
+     [selectAdoptionCountByStatus]
+     역할: 상태별 입양 신청 건수 조회
+     사용: AdminAdoptionController → 통계 카드 심사중/승인/반려 숫자
+     파라미터: String status ("심사중" / "승인" / "반려")
+     반환: int
+     ───────────────────────────────────────────────────── -->
+<select id="selectAdoptionCountByStatus" parameterType="String" resultType="int">
+    SELECT COUNT(*) FROM ADOPTION WHERE STATUS = #{status}
+</select>
+ 
+ 
+<!-- ─────────────────────────────────────────────────────
+     [updateAdoptionStatus]
+     역할: 입양 신청 상태 업데이트 (승인 또는 반려)
+     사용: AdminAdoptionStatusController → 승인/반려 버튼 클릭 시
+     파라미터: map { adoptionId, status, rejectReason }
+              - 승인 시: status='승인', rejectReason=null
+              - 반려 시: status='반려', rejectReason=사유 문자열
+     반환: int (업데이트된 행 수)
+     ───────────────────────────────────────────────────── -->
+<update id="updateAdoptionStatus" parameterType="map">
+    UPDATE ADOPTION
+    SET STATUS        = #{status},
+        REJECT_REASON = #{rejectReason, jdbcType=VARCHAR}
+    WHERE ADOPTION_ID = #{adoptionId}
+</update>
+
+
+
+<!--=============================== SELECT 영역 ===============================   -->
+<select id="selectMemberList" parameterType="PageVO" resultType="MemberVO">
+	SELECT * FROM (
+		SELECT ROWNUM RN, A.* FROM (
+			SELECT
+				MEMBER_ID AS memberId,
+				NICKNAME AS nickname,
+				EMAIL AS email,
+				JOIN_DATE AS joinDate,
+				STATUS AS status,
+				ROLE AS role
+			FROM MEMBER
+			WHERE 1=1
+			<if test="keyword != null and keyword != ''">
+				AND (
+					MEMBER_ID LIKE '%' || #{keyword} || '%'
+					OR NICKNAME LIKE '%' || #{keyword} || '%'
+					OR EMAIL LIKE '%' || #{keyword} || '%'
+				)
+			</if>
+			<if test="status != null and status != ''">
+				AND STATUS = #{status}
+			</if>
+			<if test="role != null and role != ''">
+		AND ROLE = #{role}
+			</if>
+			
+			ORDER BY JOIN_DATE DESC, MEMBER_ID DESC
+		) A
+		WHERE ROWNUM &lt;= #{endRow}
+	)
+	WHERE RN &gt;= #{startRow}
+</select>
+
+<select id="selectMemberCount" parameterType="PageVO" resultType="int">
+	SELECT COUNT(*)
+	FROM MEMBER
+	WHERE 1=1
+
+	<if test="keyword != null and keyword != ''">
+		AND (
+			MEMBER_ID LIKE '%' || #{keyword} || '%'
+			OR NICKNAME LIKE '%' || #{keyword} || '%'
+			OR EMAIL LIKE '%' || #{keyword} || '%'
+		)
+	</if>
+
+	<if test="status != null and status != ''">
+		AND STATUS = #{status}
+	</if>
+	
+	<if test="role != null and role != ''">
+		AND ROLE = #{role}
+	</if>
+</select>
+
+<select id="selectTodayJoinCount" resultType="int">
+	select count(*) from member where trunc(JOIN_DATE)
+	= TRUNC(SYSDATE)
+</select>
+
+<select id="selectRecruitDetail" parameterType="int" resultType="Volunteer_RecruitVO">
+
+SELECT
+		RECRUIT_ID     AS recruitId,
+		TITLE          AS title,
+		CONTENT        AS content,
+		VOLUNTEER_DATE AS volunteerDate,
+		LOCATION       AS location,
+		APPLY_DEADLINE AS applyDeadline,
+		CREATE_DATE    AS createDate,
+		STATUS         AS status,
+		MEMBER_ID      AS memberId,
+		THUMBNAIL_IMG  AS thumbnailImg
+	FROM VOLUNTEER_RECRUIT
+	WHERE RECRUIT_ID = #{recruitId}
+
+</select>
+
+<select id="selectRecruitList" resultType="Volunteer_RecruitVO">
+	SELECT
+			RECRUIT_ID      AS recruitId,
+			TITLE           AS title,
+			CONTENT         AS content,
+			VOLUNTEER_DATE  AS volunteerDate,
+			LOCATION        AS location,
+			APPLY_DEADLINE  AS applyDeadline,
+			CREATE_DATE     AS createDate,
+			STATUS          AS status,
+			MEMBER_ID       AS memberId,
+			THUMBNAIL_IMG   AS thumbnailImg
+		FROM VOLUNTEER_RECRUIT
+		ORDER BY CREATE_DATE DESC, RECRUIT_ID DESC
+</select>
+
+
+<select id="selectApplyListByRecruitId" parameterType="int" resultType="Volunteer_ApplyVO">
+	SELECT
+		VA.VOLUNTEER_ID   AS volunteerId,
+			VA.MEMBER_ID      AS memberId,
+			VA.RECRUIT_ID     AS recruitId,
+			VA.INTEREST_TYPE  AS interestType,
+			VA.STATUS         AS status,
+			VA.APPLY_REASON   AS applyReason,
+			VA.APPLY_DATE     AS applyDate,
+			VA.VOLUNTEER_DATE AS volunteerDate,
+			M.NICKNAME        AS nickname,
+			M.PHONE           AS phone
+		FROM VOLUNTEER_APPLY VA
+		JOIN MEMBER M
+		  ON VA.MEMBER_ID = M.MEMBER_ID
+		WHERE VA.RECRUIT_ID = #{recruitId}
+		ORDER BY VA.APPLY_DATE DESC, VA.VOLUNTEER_ID DESC
+
+</select>
+
+<select id="selectMemberDetail" parameterType="string" resultType="MemberVO">
+	SELECT
+		MEMBER_ID AS memberId,
+		MEMBER_PW AS memberPw,
+		NICKNAME AS nickname,
+		EMAIL AS email,
+		PHONE AS phone,
+		JOIN_DATE AS joinDate,
+		STATUS AS status,
+		ROLE AS role,
+		PROFILE_IMG AS profileImg,
+		MEMBER_NAME AS memberName
+	FROM MEMBER
+	WHERE MEMBER_ID = #{memberId}
+</select>
+
+<sql id="adminAnimalFilter">
+<!--동물 종류 /전체조회시 null  -->
+<if test="animalType != null and animalType !=''">
+	AND A.ANIMAL_TYPE =#{animalType}
+</if>
+<!--입양 상태 : 입양가능/ 입양검토중 / 입양완료 ..  -->
+<if test ="adoptionStatus != null and adoptionStatus !=''">
+	AND A.ADOPTION_STATUS =#{adoptionStatus}
+</if>
+<!--키워드 : 동물이름 LIKE 검색   -->
+<if test="keyword !=null and keyword !=''">
+	AND A.ANIMAL_NAME LIKE '%' || #{keyword} ||'%'
+</if> 
+</sql>
+<!-- 필터 조건에 맞는 전체 건수 → 컨트롤러에서 totalPage 계산에 사용 -->
+    <select id="selectAdminAnimalCount" parameterType="PageVO" resultType="int">
+        SELECT COUNT(*)
+        FROM ANIMAL A
+        WHERE 1=1
+        <include refid="adminAnimalFilter"/>
+    </select>
+
+<!-- 
+        동물 목록 조회 (페이징 + 필터 + 메인이미지)
+        
+        3단 중첩 쿼리 구조 - 회원관리 selectMemberList와 동일한 Oracle 페이징 패턴:
+          1단계(안쪽): 원본 데이터 조회 + LEFT JOIN + 필터 + 정렬
+          2단계(중간): ROWNUM 부여 (정렬 후 번호 매기기 위해 중첩 필요)
+          3단계(바깥): startRow ~ endRow 범위만 추출
+    -->
+    
+     <select id="selectAdminAnimalList" parameterType="PageVO" resultType="AnimalVO">
+        SELECT * FROM (
+            SELECT ROWNUM AS RN, T.* FROM (
+                SELECT
+                    A.ANIMAL_ID       AS animalId,
+                    A.ANIMAL_NAME     AS animalName,
+                    A.ANIMAL_TYPE     AS animalType,
+                    A.BREED           AS breed,
+                    A.GENDER          AS gender,
+                    A.AGE             AS age,
+                    A.WEIGHT          AS weight,
+                    A.ADOPTION_STATUS AS adoptionStatus,
+                    A.PERSONALITY     AS personality,
+                    A.VIEW_COUNT      AS viewCount,
+                    A.CREATE_DATE     AS createDate,
+                    <!-- AnimalVO의 mainImage 필드에 매핑 → JSP 이미지 출력용 -->
+                    I.SAVE_FILE_NAME  AS mainImage
+                FROM ANIMAL A
+                <!-- LEFT JOIN: 이미지 없는 동물도 목록에 표시 -->
+                LEFT OUTER JOIN ANIMAL_IMAGE I
+                    ON A.ANIMAL_ID = I.ANIMAL_ID
+                   AND I.IS_MAIN = 'Y'
+                WHERE 1=1
+                <include refid="adminAnimalFilter"/>
+                <choose>
+                    <when test="sort == 'views'">ORDER BY A.VIEW_COUNT DESC</when>
+                    <otherwise>ORDER BY A.CREATE_DATE DESC</otherwise>
+                </choose>
+            ) T
+            WHERE ROWNUM &lt;= #{endRow}
+        )
+        WHERE RN &gt;= #{startRow}
+    </select>
+    
+    <!--            대시보드         -->
+    <select id="selectAnimalDashboardStats" resultType="map">
+	    SELECT 
+		    COUNT(*) AS TOTAL_COUNT,
+		    COUNT(CASE WHEN ANIMAL_TYPE = 'DOG' THEN 1 END) AS DOG_COUNT,
+		    COUNT(CASE WHEN ANIMAL_TYPE = 'CAT' THEN 1 END) AS CAT_COUNT,
+		    COUNT(CASE WHEN CREATE_DATE >= TRUNC(SYSDATE, 'IW') THEN 1 END) AS WEEK_NEW_COUNT,
+		    COUNT(CASE WHEN ADOPTION_STATUS = '입양가능'   THEN 1 END) AS AVAILABLE_COUNT,
+		    COUNT(CASE WHEN ADOPTION_STATUS = '입양검토중' THEN 1 END) AS PROGRESS_COUNT,
+		    
+		    /* 서브쿼리를 MAX()로 감싸서 그룹 함수로 인식하게 만듭니다 */
+		    MAX((SELECT COUNT(*) FROM ADOPTION
+		         WHERE STATUS = '승인'
+		           AND TO_CHAR(APPLY_DATE, 'YYYYMM') = TO_CHAR(SYSDATE, 'YYYYMM')
+		    )) AS MONTH_DONE_COUNT,
+		
+		    MAX((SELECT COUNT(*) FROM ADOPTION
+		         WHERE STATUS = '승인'
+		           AND TO_CHAR(APPLY_DATE, 'YYYYMM') = TO_CHAR(ADD_MONTHS(SYSDATE,-1), 'YYYYMM')
+		    )) AS LAST_MONTH_DONE_COUNT
+		FROM ANIMAL
+	</select>
+    
+   	<select id="selectRecentAnimalList" resultType="AnimalVO">
+	    SELECT * FROM (
+	        SELECT 
+	            ANIMAL_ID       as animalId,
+	            ANIMAL_NAME     as animalName,
+	            ANIMAL_TYPE     as animalType,
+	            BREED           as breed,
+	            ADOPTION_STATUS as adoptionStatus,
+	            CREATE_DATE     as createDate
+	        FROM ANIMAL
+	        ORDER BY CREATE_DATE DESC, ANIMAL_ID DESC
+	    ) 
+	    <![CDATA[ WHERE ROWNUM <= 5 ]]>
+	</select>
+	
+	<select id="selectTodayCombinedSchedule" resultType="map">
+	    SELECT * FROM (
+	       
+	        SELECT 
+	            'ADOPTION' AS TYPE,
+	            ADOPTION_ID AS ID,
+	            MEMBER_ID || '님 입양 상담 방문' AS TITLE,
+	            '방문 예정' AS CONTENT,
+	            TO_CHAR(VISIT_DATE, 'HH24:MI') AS TIME,
+	            TO_CHAR(VISIT_DATE, 'YYYY-MM-DD HH24:MI') AS FULL_TIME,
+	            VISIT_DATE AS SORT_DATE
+	        FROM ADOPTION
+	        WHERE TO_CHAR(VISIT_DATE, 'YYYY-MM-DD') = TO_CHAR(SYSDATE, 'YYYY-MM-DD')
+	          AND STATUS = '승인' 
+	
+	        UNION ALL
+	
+	        SELECT 
+	            'VOLUNTEER' AS TYPE,
+	            VOLUNTEER_ID AS ID,
+	            MEMBER_ID || '님 봉사 활동' AS TITLE,
+	            '센터 방문 봉사' AS CONTENT, 
+	            TO_CHAR(VOLUNTEER_DATE, 'HH24:MI') AS TIME,
+	            TO_CHAR(VOLUNTEER_DATE, 'YYYY-MM-DD HH24:MI') AS FULL_TIME,
+	            VOLUNTEER_DATE AS SORT_DATE
+	        FROM VOLUNTEER_APPLY
+	        WHERE TO_CHAR(VOLUNTEER_DATE, 'YYYY-MM-DD') = TO_CHAR(SYSDATE, 'YYYY-MM-DD')
+	          AND STATUS = '승인'
+	    )
+	    ORDER BY SORT_DATE ASC 
+	</select>
+	
+	<select id="selectAdoptionDetail" parameterType="string" resultType="map">
+    SELECT 
+	        ADOPTION_ID as ID,
+	        MEMBER_ID as TITLE,
+	        '신청 동물 번호: ' || ANIMAL_ID as CONTENT,
+	        TO_CHAR(APPLY_DATE, 'YYYY-MM-DD HH24:MI') as TIME
+	    FROM ADOPTION
+	    WHERE ADOPTION_ID = #{id}
+	</select>
+	
+	<select id="selectVolunteerDetail" parameterType="string" resultType="map">
+	    SELECT 
+	        V_APPLY_ID as ID,  MEMBER_ID as TITLE,
+	        '봉사 신청 내역 확인' as CONTENT,
+	        TO_CHAR(APPLY_DATE, 'YYYY-MM-DD HH24:MI') as TIME
+	    FROM VOLUNTEER_APPLY
+	    WHERE VOLUNTEER_ID = #{id} 
+	</select>
+	
+	<!-- ═══════════════════════════════════════════
+     이번 달 전체 일정 조회 (캘린더 모달용)
+     - 파라미터: map { year(String), month(String) } ex) { year:'2026', month:'04' }
+     - 파라미터 없을 경우 SYSDATE 기준 이번 달로 동작
+     - ADOPTION 방문일(VISIT_DATE) + VOLUNTEER 봉사일(VOLUNTEER_DATE) 기준으로 변경
+     ═══════════════════════════════════════════ -->
+	<select id="selectMonthCombinedSchedule" parameterType="map" resultType="map">
+    SELECT TYPE, ID, TITLE, CONTENT, TIME, FULL_TIME, DATE_KEY
+    FROM (
+        /* ── 입양 상담: 승인 + 심사중 ── */
+        SELECT
+            'ADOPTION' AS TYPE,
+            TO_CHAR(A.ADOPTION_ID) AS ID,
+            A.MEMBER_ID || '님 입양 상담' AS TITLE,
+            NVL(AN.ANIMAL_NAME,'동물') || ' (' || NVL(AN.ANIMAL_TYPE,'-') || ')' AS CONTENT,
+            TO_CHAR(A.VISIT_DATE, 'HH24:MI') AS TIME,
+            TO_CHAR(A.VISIT_DATE, 'YYYY-MM-DD HH24:MI') AS FULL_TIME,
+            TO_CHAR(A.VISIT_DATE, 'YYYY-MM-DD') AS DATE_KEY
+        FROM ADOPTION A
+        LEFT JOIN ANIMAL AN ON A.ANIMAL_ID = AN.ANIMAL_ID
+        WHERE A.VISIT_DATE IS NOT NULL
+          AND A.STATUS IN ('승인', '심사중')
+          AND TO_CHAR(A.VISIT_DATE, 'YYYYMM') =
+              <choose>
+                  <when test="year != null and month != null">
+                      #{year} || LPAD(#{month}, 2, '0')
+                  </when>
+                  <otherwise>TO_CHAR(SYSDATE, 'YYYYMM')</otherwise>
+              </choose>
+
+        UNION ALL
+
+        /* ── 봉사 활동: 승인 + 대기 ── */
+        SELECT
+            'VOLUNTEER' AS TYPE,
+            TO_CHAR(VA.VOLUNTEER_ID) AS ID,
+            VA.MEMBER_ID || '님 봉사' AS TITLE,
+            NVL(VR.TITLE,'봉사') || ' @ ' || NVL(VR.LOCATION,'-') AS CONTENT,
+            TO_CHAR(VA.VOLUNTEER_DATE, 'HH24:MI') AS TIME,
+            TO_CHAR(VA.VOLUNTEER_DATE, 'YYYY-MM-DD HH24:MI') AS FULL_TIME,
+            TO_CHAR(VA.VOLUNTEER_DATE, 'YYYY-MM-DD') AS DATE_KEY
+        FROM VOLUNTEER_APPLY VA
+        LEFT JOIN VOLUNTEER_RECRUIT VR ON VA.RECRUIT_ID = VR.RECRUIT_ID
+        WHERE VA.VOLUNTEER_DATE IS NOT NULL
+          AND VA.STATUS IN ('승인', '대기')
+          AND TO_CHAR(VA.VOLUNTEER_DATE, 'YYYYMM') =
+              <choose>
+                  <when test="year != null and month != null">
+                      #{year} || LPAD(#{month}, 2, '0')
+                  </when>
+                  <otherwise>TO_CHAR(SYSDATE, 'YYYYMM')</otherwise>
+              </choose>
+              
+              UNION ALL
+
+/* ── 봉사 모집글 (관리자 등록): VOLUNTEER_DATE 기준 ── */
+SELECT
+    'RECRUIT' AS TYPE,
+    TO_CHAR(VR.RECRUIT_ID) AS ID,
+    '[모집] ' || VR.TITLE AS TITLE,
+    VR.LOCATION AS CONTENT,
+    '종일' AS TIME,
+    TO_CHAR(VR.VOLUNTEER_DATE, 'YYYY-MM-DD') || ' 종일' AS FULL_TIME,
+    TO_CHAR(VR.VOLUNTEER_DATE, 'YYYY-MM-DD') AS DATE_KEY
+FROM VOLUNTEER_RECRUIT VR
+WHERE VR.VOLUNTEER_DATE IS NOT NULL
+  AND VR.STATUS = '모집중'
+  AND TO_CHAR(VR.VOLUNTEER_DATE, 'YYYYMM') =
+      <choose>
+          <when test="year != null and month != null">
+              #{year} || LPAD(#{month}, 2, '0')
+          </when>
+          <otherwise>TO_CHAR(SYSDATE, 'YYYYMM')</otherwise>
+      </choose>
+    )
+    ORDER BY DATE_KEY ASC, TIME ASC
+</select>
+	
+	<select id="selectWeekCombinedSchedule" resultType="map">
+	    /* CDATA 시작: 이 안의 기호들은 안전하게 보호됩니다 */
+	    <![CDATA[
+	    SELECT * FROM (
+	        /* ── 입양 상담 방문 ── */
+	        SELECT
+	            'ADOPTION' AS TYPE,
+	            TO_CHAR(A.ADOPTION_ID) AS ID,
+	            A.MEMBER_ID || '님 입양 상담' AS TITLE,
+	            NVL(AN.ANIMAL_NAME, '동물') || ' (' || NVL(AN.ANIMAL_TYPE, '-') || ')' AS CONTENT,
+	            TO_CHAR(A.VISIT_DATE, 'HH24:MI') AS TIME,
+	            TO_CHAR(A.VISIT_DATE, 'YYYY-MM-DD HH24:MI') AS FULL_TIME,
+	            TO_CHAR(A.VISIT_DATE, 'YYYY-MM-DD') AS DATE_KEY,
+	            A.VISIT_DATE AS SORT_DATE
+	        FROM ADOPTION A
+	        LEFT JOIN ANIMAL AN ON A.ANIMAL_ID = AN.ANIMAL_ID
+	        WHERE A.VISIT_DATE IS NOT NULL
+	          AND A.STATUS = '승인'
+	          AND A.VISIT_DATE >= TRUNC(SYSDATE, 'IW')
+	          AND A.VISIT_DATE < TRUNC(SYSDATE, 'IW') + 7
+	
+	        UNION ALL
+	
+	        /* ── 봉사 활동 ── */
+	        SELECT
+	            'VOLUNTEER' AS TYPE,
+	            TO_CHAR(VA.VOLUNTEER_ID) AS ID,
+	            VA.MEMBER_ID || '님 봉사' AS TITLE,
+	            NVL(VR.TITLE, '봉사') || ' @ ' || NVL(VR.LOCATION, '-') AS CONTENT,
+	            TO_CHAR(VA.VOLUNTEER_DATE, 'HH24:MI') AS TIME,
+	            TO_CHAR(VA.VOLUNTEER_DATE, 'YYYY-MM-DD HH24:MI') AS FULL_TIME,
+	            TO_CHAR(VA.VOLUNTEER_DATE, 'YYYY-MM-DD') AS DATE_KEY,
+	            VA.VOLUNTEER_DATE AS SORT_DATE
+	        FROM VOLUNTEER_APPLY VA
+	        LEFT JOIN VOLUNTEER_RECRUIT VR ON VA.RECRUIT_ID = VR.RECRUIT_ID
+	        WHERE VA.VOLUNTEER_DATE IS NOT NULL
+	          AND VA.STATUS = '승인'
+	          AND VA.VOLUNTEER_DATE >= TRUNC(SYSDATE, 'IW')
+	          AND VA.VOLUNTEER_DATE < TRUNC(SYSDATE, 'IW') + 7
+	    )
+	    ORDER BY SORT_DATE ASC
+	    ]]>
+	    /* CDATA 끝 */
+	</select>
+	
+	<select id="selectRecentActivityFeed" resultType="map">
+    SELECT * FROM (
+        /* ── 입양 신청: 심사중 상태만 표시 (승인/반려 완료 제외) ── */
+        SELECT 
+            'ADOPTION' AS TYPE,
+            TO_CHAR(ADOPTION_ID) AS ID,  
+            MEMBER_ID || '님이 입양 신청을 하였습니다.' AS TITLE,
+            TO_CHAR(APPLY_DATE, 'YYYY-MM-DD HH24:MI') AS REG_DATE
+        FROM ADOPTION
+        WHERE STATUS = '심사중'     /* ← 완료/반려된 건 제외 */
+        
+        UNION ALL
+    
+        /* ── 구조 제보: ANIMAL_REPORT 테이블 (미처리만) ── */
+		SELECT 
+		    'RESCUE' AS TYPE,
+		    TO_CHAR(REPORT_ID) AS ID,
+		    NVL(MEMBER_ID, '비회원') || '님이 유기동물을 제보하였습니다.' AS TITLE,
+		    TO_CHAR(REPORT_DATE, 'YYYY-MM-DD HH24:MI') AS REG_DATE
+		FROM ANIMAL_REPORT
+		WHERE PROCESS_YN = 'N'   /* 미처리만 표시 */
+        
+        UNION ALL
+     
+        /* ── 봉사 신청: 대기 상태만 표시 (승인/반려 완료 제외) ── */
+        SELECT 
+            'VOLUNTEER' AS TYPE,
+            TO_CHAR(RECRUIT_ID) || '_' || TO_CHAR(VOLUNTEER_ID) AS ID,
+            MEMBER_ID || '님이 봉사 신청을 하였습니다.' AS TITLE,
+            TO_CHAR(APPLY_DATE, 'YYYY-MM-DD HH24:MI') AS REG_DATE
+        FROM VOLUNTEER_APPLY
+        WHERE STATUS = '대기'       /* ← 승인/반려 완료 제외 */
+        
+        UNION ALL
+    
+        /* ── 후원: 전체 표시 (완료 개념 없음) ── */
+        SELECT 
+            'DONATION' AS TYPE,
+            TO_CHAR(DONATION_ID) AS ID,  
+            DONATOR_NAME || '님이 ' || TO_CHAR(DONATION_AMOUNT, 'FM999,999,999') || '원을 후원하였습니다.' AS TITLE,
+            TO_CHAR(DONATION_DATE, 'YYYY-MM-DD HH24:MI') AS REG_DATE
+        FROM DONATION
+    ) 
+    ORDER BY REG_DATE DESC
+    FETCH FIRST 50 ROWS ONLY
+</select>
+	
+	<select id="selectAnimalOfTheMonth" resultType="AnimalVO">
+	    SELECT * FROM (
+	        SELECT 
+	            A.ANIMAL_ID AS animalId,
+	            A.ANIMAL_NAME AS animalName,
+	            A.ANIMAL_TYPE AS animalType,
+	            A.VIEW_COUNT AS hit,
+	            AI.SAVE_FILE_NAME AS mainImage
+	        FROM ANIMAL A
+	        LEFT JOIN ANIMAL_IMAGE AI ON A.ANIMAL_ID = AI.ANIMAL_ID AND AI.IS_MAIN = 'Y'
+	        WHERE A.ADOPTION_STATUS = '입양가능'
+	        ORDER BY A.VIEW_COUNT DESC
+	    ) WHERE ROWNUM = 1
+	</select>
+		
+		
+
+
+<!--=============================== SELECT 영역 ===============================   -->
+
+
+<!--=============================== UPDATE 영역 ===============================   -->
+<update id="updateMemberRole" parameterType="map" >
+	UPDATE MEMBER
+	SET ROLE = #{role}
+	WHERE MEMBER_ID =#{memberId}
+</update>
+
+<update id="updateMemberStatus" parameterType="map">
+	UPDATE MEMBER
+	SET STATUS =#{status}
+	WHERE MEMBER_ID =#{memberId}
+</update>
+
+<update id="updateApplyStatus" parameterType="map">
+		UPDATE VOLUNTEER_APPLY
+		SET STATUS = #{status},
+		REJECT_REASON = #{rejectReason, jdbcType=VARCHAR}
+    WHERE VOLUNTEER_ID = #{volunteerId}
+	</update>
+	 <!-- 
+        입양 상태 변경 - AJAX로 호출
+        newStatus는 DB 제약조건과 일치해야 함: '입양가능' / '입양검토중' / '입양완료'
+    -->
+<update id="updateAnimalStatus" parameterType="map">
+	UPDATE ANIMAL
+	SET ADOPTION_STATUS = #{newStatus}
+	WHERE ANIMAL_ID = #{animalId}
+</update>
+
+<!--=============================== UPDATE 영역 ===============================   -->
+
+
+<!--=============================== DELETE 영역 ===============================   -->
+<delete id="deleteMember" parameterType ="String">
+	DELETE FROM MEMBER
+	WHERE MEMBER_ID =#{memberId}
+</delete>
+
+<!-- 
+        동물 삭제
+        FK ON DELETE CASCADE로 ANIMAL_IMAGE, ANIMAL_MEDICAL, ANIMAL_RESCUE 자동 삭제
+    -->
+    <delete id="deleteAnimal" parameterType="int">
+        DELETE FROM ANIMAL
+        WHERE ANIMAL_ID = #{animalId}
+    </delete>
+
+
+
+
+
+<!-- ========================= 게시판 관리 ========================= -->
+
+<!-- 전체 게시글 목록 (페이징 + 필터 + 신고건수) -->
+<select id="selectAdminBoardList" parameterType="map" resultType="BoardVO">
+    SELECT * FROM (
+        SELECT ROWNUM AS RN, T.* FROM (
+            SELECT
+                B.BOARD_ID    AS boardId,
+                B.MEMBER_ID   AS memberId,
+                B.BOARD_TYPE  AS boardType,
+                B.TITLE       AS title,
+                B.VIEW_COUNT  AS viewCount,
+                B.LIKE_COUNT  AS likeCount,
+                B.IS_HIDDEN   AS isHidden,
+                TO_CHAR(B.CREATE_DATE, 'YYYY.MM.DD') AS createDate,
+                (SELECT COUNT(*) FROM BOARD_REPORT R
+                 WHERE R.BOARD_ID = B.BOARD_ID) AS reportCount
+            FROM BOARD B
+            WHERE 1=1
+            <if test="boardType != null and boardType != ''">
+                AND B.BOARD_TYPE = #{boardType}
+            </if>
+            <if test="keyword != null and keyword != ''">
+                AND (B.TITLE    LIKE '%' || #{keyword} || '%'
+                  OR B.MEMBER_ID LIKE '%' || #{keyword} || '%')
+            </if>
+            ORDER BY B.BOARD_ID DESC
+        ) T WHERE ROWNUM &lt;= #{endRow}
+    ) WHERE RN &gt;= #{startRow}
+</select>
+
+<!-- 전체 게시글 건수 -->
+<select id="selectAdminBoardCount" parameterType="map" resultType="int">
+    SELECT COUNT(*)
+    FROM BOARD B
+    WHERE 1=1
+    <if test="boardType != null and boardType != ''">
+        AND B.BOARD_TYPE = #{boardType}
+    </if>
+    <if test="keyword != null and keyword != ''">
+        AND (B.TITLE    LIKE '%' || #{keyword} || '%'
+          OR B.MEMBER_ID LIKE '%' || #{keyword} || '%')
+    </if>
+</select>
+
+<!-- 숨김 게시글 건수 -->
+<select id="selectHiddenBoardCount" resultType="int">
+    SELECT COUNT(*) FROM BOARD
+    WHERE IS_HIDDEN = 'Y'
+</select>
+
+<!-- 신고된 게시글 목록 (페이징) -->
+<select id="selectReportedBoardList" parameterType="map" resultType="BoardVO">
+    SELECT * FROM (
+        SELECT ROWNUM AS RN, T.* FROM (
+            SELECT
+                B.BOARD_ID    AS boardId,
+                B.MEMBER_ID   AS memberId,
+                B.BOARD_TYPE  AS boardType,
+                B.TITLE       AS title,
+                B.IS_HIDDEN   AS isHidden,
+                TO_CHAR(B.CREATE_DATE, 'YYYY.MM.DD') AS createDate,
+                COUNT(R.REPORT_ID) AS reportCount
+            FROM BOARD B
+            INNER JOIN BOARD_REPORT R ON B.BOARD_ID = R.BOARD_ID
+            WHERE R.STATUS = 'N'
+            GROUP BY B.BOARD_ID, B.MEMBER_ID, B.BOARD_TYPE,
+                     B.TITLE, B.IS_HIDDEN, B.CREATE_DATE
+            ORDER BY reportCount DESC, B.BOARD_ID DESC
+        ) T WHERE ROWNUM &lt;= #{endRow}
+    ) WHERE RN &gt;= #{startRow}
+</select>
+
+<!-- 신고된 게시글 건수 -->
+<select id="selectReportedBoardCount" resultType="int">
+    SELECT COUNT(DISTINCT BOARD_ID)
+    FROM BOARD_REPORT
+    WHERE STATUS = 'N'
+</select>
+
+<!-- 게시글 숨김/복구 -->
+<update id="updateBoardHidden" parameterType="map">
+    UPDATE BOARD
+    SET IS_HIDDEN = #{isHidden}
+    WHERE BOARD_ID = #{boardId}
+</update>
+
+<!-- 게시글 강제 삭제 -->
+<delete id="deleteAdminBoard" parameterType="int">
+    DELETE FROM BOARD
+    WHERE BOARD_ID = #{boardId}
+</delete>
+
+<!-- 신고 사유 목록 조회 -->
+<select id="selectBoardReportList" parameterType="int" resultType="BoardReportVO">
+    SELECT
+        REPORT_ID  AS reportId,
+        BOARD_ID   AS boardId,
+        MEMBER_ID  AS memberId,
+        REASON     AS reason,
+        TO_CHAR(REPORT_DATE, 'YYYY.MM.DD') AS reportDate,
+        STATUS     AS status
+    FROM BOARD_REPORT
+    WHERE BOARD_ID = #{boardId}
+    ORDER BY REPORT_DATE DESC
+</select>
+
+<!-- 신고 기각 (STATUS = 'Y'로 업데이트) -->
+<update id="updateBoardReportStatus" parameterType="map">
+    UPDATE BOARD_REPORT
+    SET STATUS = #{status}
+    WHERE BOARD_ID = #{boardId}
+</update>
+
+<!-- 페이징 + 상태 필터 적용 목록 조회 -->
+<select id="selectAdoptionListPaged" parameterType="map" resultMap="adoptionResultMap">
+    SELECT * FROM (
+        SELECT ROWNUM AS RN, T.* FROM (
+            SELECT
+                A.ADOPTION_ID                           AS adoptionId,
+                A.MEMBER_ID                             AS memberId,
+                A.ANIMAL_ID                             AS animalId,
+                A.VISIT_DATE                            AS visitDate,
+                A.APPLY_DATE                            AS applyDate,
+                A.STATUS                                AS status,
+                A.REJECT_REASON                         AS rejectReason,
+                AN.ANIMAL_NAME                          AS animalName,
+                AN.ANIMAL_TYPE                          AS animalType,
+                AN.BREED                                AS breed,
+                AN.AGE                                  AS age,
+                AN.PERSONALITY                          AS personality,
+                AI.SAVE_FILE_NAME                       AS mainImage,
+                M.PROFILE_IMG                           AS profileImg,
+                D.JOB                                   AS job,
+                D.HOUSING_TYPE                          AS housingType,
+                D.PET_EXPERIENCE                        AS petExperience,
+                D.ADDRESS                               AS address,
+                D.ADOPTION_REASON                       AS adoptionReason
+            FROM ADOPTION A
+            LEFT JOIN ANIMAL          AN ON A.ANIMAL_ID   = AN.ANIMAL_ID
+            LEFT JOIN ANIMAL_IMAGE    AI ON AN.ANIMAL_ID  = AI.ANIMAL_ID
+                                        AND AI.IS_MAIN    = 'Y'
+            LEFT JOIN MEMBER          M  ON A.MEMBER_ID   = M.MEMBER_ID
+            LEFT JOIN ADOPTION_DETAIL D  ON A.ADOPTION_ID = D.ADOPTION_ID
+            <!-- 상태 필터: statusFilter 가 null 이면 전체 조회 -->
+            <where>
+                <if test="statusFilter != null and statusFilter != ''">
+                    A.STATUS = #{statusFilter}
+                </if>
+            </where>
+            ORDER BY A.APPLY_DATE DESC
+        ) T WHERE ROWNUM &lt;= #{endRow}
+    ) WHERE RN &gt;= #{startRow}
+</select>
+
+<!-- 1. 전체 동물 수 (히어로 통계) -->
+<select id="selectAnimalCount" resultType="int">
+    SELECT COUNT(*) FROM ANIMAL
+</select>
+ 
+<!-- 2. 봉사 승인 참여자 수 (히어로 통계) -->
+<select id="selectVolunteerApprovedCount" resultType="int">
+    SELECT COUNT(*) FROM VOLUNTEER_APPLY WHERE STATUS = '승인'
+</select>
+ 
+<!-- 3. 이번주 인기 동물: 조회수 + 찜수 합산 상위 N마리 -->
+<select id="selectPopularAnimals" parameterType="int" resultType="AnimalVO">
+    SELECT * FROM (
+        SELECT
+            A.ANIMAL_ID                   AS animalId,
+            A.ANIMAL_NAME                 AS animalName,
+            A.ANIMAL_TYPE                 AS animalType,
+            A.BREED                       AS breed,
+            A.VIEW_COUNT                  AS viewCount,
+            AI.SAVE_FILE_NAME             AS mainImage,
+            (SELECT COUNT(*)
+               FROM FAVORITE_ANIMAL F
+              WHERE F.ANIMAL_ID = A.ANIMAL_ID) AS favoriteCount
+        FROM ANIMAL A
+        LEFT JOIN ANIMAL_IMAGE AI
+               ON A.ANIMAL_ID = AI.ANIMAL_ID
+              AND AI.IS_MAIN  = 'Y'
+        WHERE A.ADOPTION_STATUS = '입양가능'
+        ORDER BY (A.VIEW_COUNT +
+                  (SELECT COUNT(*) FROM FAVORITE_ANIMAL F
+                    WHERE F.ANIMAL_ID = A.ANIMAL_ID)) DESC
+    ) WHERE ROWNUM &lt;= #{limit}
+</select>
+ 
+<!-- 4. 모집 중인 봉사활동 최신 N개 -->
+<select id="selectPopularVolunteers" parameterType="int" resultType="Volunteer_RecruitVO">
+   SELECT * FROM (
+        SELECT
+            RECRUIT_ID      AS recruitId,
+            TITLE           AS title,
+            LOCATION        AS location,
+            THUMBNAIL_IMG   AS thumbnailImg,
+            VOLUNTEER_DATE  AS volunteerDate
+        FROM VOLUNTEER_RECRUIT
+        WHERE STATUS = '모집중'
+        ORDER BY CREATE_DATE DESC
+    ) WHERE ROWNUM &lt;= #{limit}
+</select>
+ 
+<!-- 5. 이번주 인기글: 조회수 + 추천수*2 기준 상위 N개 -->
+<select id="selectPopularBoards" parameterType="int" resultType="BoardVO">
+    SELECT * FROM (
+        SELECT
+            BOARD_ID   AS boardId,
+            MEMBER_ID  AS memberId,
+            BOARD_TYPE AS boardType,
+            TITLE      AS title,
+            VIEW_COUNT AS viewCount,
+            LIKE_COUNT AS likeCount
+        FROM BOARD
+        WHERE IS_HIDDEN = 'N'
+          AND CREATE_DATE &gt;= SYSDATE - 7
+        ORDER BY (VIEW_COUNT + LIKE_COUNT * 2) DESC
+    ) WHERE ROWNUM &lt;= #{limit}
+</select>
+ 
+<!-- 6. 이달의 후원왕: 이번달 후원금액 합산 상위 N명 -->
+<select id="selectDonorRanking" parameterType="int" resultType="map">
+    SELECT * FROM (
+        SELECT
+            DONATOR_NAME         AS donatorName,
+            SUM(DONATION_AMOUNT) AS totalAmount
+        FROM DONATION
+        WHERE DONATION_DATE &gt;= TRUNC(SYSDATE, 'MM')
+        GROUP BY DONATOR_NAME
+        ORDER BY totalAmount DESC
+    ) WHERE ROWNUM &lt;= #{limit}
+</select>
+
+<select id="selectAdoptionHistoryCount" parameterType="string" resultType="int">
+    SELECT COUNT(*)
+    FROM ADOPTION A
+    WHERE 1 = 1
+    <if test="_parameter != null and _parameter != ''">
+        AND A.STATUS = #{_parameter}
+    </if>
+</select>
+
+<select id="selectAdoptionHistoryListPaged"
+        parameterType="map"
+        resultMap="adminAdoptionHistoryMap">
+    SELECT *
+    FROM (
+        SELECT ROWNUM RN, T.*
+        FROM (
+            SELECT
+                A.ADOPTION_ID,
+                A.MEMBER_ID,
+                A.ANIMAL_ID,
+                A.VISIT_DATE,
+                A.APPLY_DATE,
+                A.STATUS,
+                A.REJECT_REASON,
+
+                M.MEMBER_NAME,
+                M.NICKNAME,
+                M.EMAIL,
+                M.PHONE,
+                M.PROFILE_IMG,
+
+                AN.ANIMAL_NAME,
+                AN.ANIMAL_TYPE,
+                AN.BREED,
+                AN.AGE,
+                AN.GENDER,
+                AN.ADOPTION_STATUS,
+                AN.PERSONALITY,
+
+                AI.SAVE_FILE_NAME AS MAIN_IMAGE,
+
+                D.JOB,
+                D.HOUSING_TYPE,
+                D.PET_EXPERIENCE,
+                D.ADDRESS,
+                D.ADOPTION_REASON
+            FROM ADOPTION A
+            JOIN MEMBER M
+              ON A.MEMBER_ID = M.MEMBER_ID
+            JOIN ANIMAL AN
+              ON A.ANIMAL_ID = AN.ANIMAL_ID
+            LEFT JOIN ADOPTION_DETAIL D
+              ON A.ADOPTION_ID = D.ADOPTION_ID
+            LEFT JOIN ANIMAL_IMAGE AI
+              ON AN.ANIMAL_ID = AI.ANIMAL_ID
+             AND AI.IS_MAIN = 'Y'
+            WHERE 1 = 1
+            <if test="statusFilter != null and statusFilter != ''">
+                AND A.STATUS = #{statusFilter}
+            </if>
+            ORDER BY A.APPLY_DATE DESC, A.ADOPTION_ID DESC
+        ) T
+        WHERE ROWNUM &lt;= #{endRow}
+    )
+    WHERE RN &gt;= #{startRow}
+</select>
+
+<select id="selectAdoptionHistoryDetail"
+        parameterType="int"
+        resultMap="adminAdoptionHistoryMap">
+    SELECT
+        A.ADOPTION_ID,
+        A.MEMBER_ID,
+        A.ANIMAL_ID,
+        A.VISIT_DATE,
+        A.APPLY_DATE,
+        A.STATUS,
+        A.REJECT_REASON,
+
+        M.MEMBER_NAME,
+        M.NICKNAME,
+        M.EMAIL,
+        M.PHONE,
+        M.PROFILE_IMG,
+
+        AN.ANIMAL_NAME,
+        AN.ANIMAL_TYPE,
+        AN.BREED,
+        AN.AGE,
+        AN.GENDER,
+        AN.ADOPTION_STATUS,
+        AN.PERSONALITY,
+
+        AI.SAVE_FILE_NAME AS MAIN_IMAGE,
+
+        D.JOB,
+        D.HOUSING_TYPE,
+        D.PET_EXPERIENCE,
+        D.ADDRESS,
+        D.ADOPTION_REASON
+    FROM ADOPTION A
+    JOIN MEMBER M
+      ON A.MEMBER_ID = M.MEMBER_ID
+    JOIN ANIMAL AN
+      ON A.ANIMAL_ID = AN.ANIMAL_ID
+    LEFT JOIN ADOPTION_DETAIL D
+      ON A.ADOPTION_ID = D.ADOPTION_ID
+    LEFT JOIN ANIMAL_IMAGE AI
+      ON AN.ANIMAL_ID = AI.ANIMAL_ID
+     AND AI.IS_MAIN = 'Y'
+    WHERE A.ADOPTION_ID = #{_parameter}
+</select>
+
+</mapper>

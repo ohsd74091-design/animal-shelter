@@ -1,0 +1,431 @@
+/* ================================================
+   adoptionForm.css
+   ================================================ */
+
+:root {
+    --primary:        #ec5b13;
+    --primary-light:  #fff0ea;
+    --on-surface:     #322e2b;
+    --on-surface-var: #5f5b57;
+    --surface-low:    #faf7f5;
+    --surface-mid:    #f5efec;
+    --surface-high:   #ede5df;
+    --border-color:   #e8e0db;
+    --radius-card:    24px;
+    --radius-input:   14px;
+    --shadow-card:    0 8px 28px rgba(0,0,0,0.05);
+}
+
+/* ---- 메인 레이아웃 ---- */
+.adoption-main {
+    padding: 48px 0 96px;
+    background: #fbfaf8;
+    min-height: calc(100vh - 80px);
+}
+
+.page-title-area {
+    margin-bottom: 40px;
+}
+
+.page-label {
+    display: block;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--primary);
+    margin-bottom: 8px;
+}
+
+.page-title {
+    font-size: 34px;
+    font-weight: 800;
+    color: var(--on-surface);
+    margin: 0 0 8px;
+    line-height: 1.2;
+}
+
+.page-desc {
+    font-size: 15px;
+    color: var(--on-surface-var);
+    margin: 0;
+}
+
+/* ---- 폼 2컬럼 그리드 ---- */
+.adoption-form-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 28px;
+}
+
+@media (min-width: 1024px) {
+    .adoption-form-grid {
+        grid-template-columns: 7fr 5fr;
+        align-items: start;
+    }
+}
+
+.col-left,
+.col-right {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+/* ---- 카드 공통 ---- */
+.form-card {
+    background: #fff;
+    border-radius: var(--radius-card);
+    padding: 32px 36px;
+    box-shadow: var(--shadow-card);
+}
+
+.card-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 24px;
+}
+
+.card-bar {
+    display: inline-block;
+    width: 4px;
+    height: 22px;
+    background: var(--primary);
+    border-radius: 999px;
+    flex-shrink: 0;
+}
+
+.card-header h2 {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--on-surface);
+    margin: 0;
+}
+
+/* ---- 동물 정보 ---- */
+.animal-info-row {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+}
+
+.animal-thumb {
+    width: 112px;
+    height: 112px;
+    border-radius: 18px;
+    overflow: hidden;
+    flex-shrink: 0;
+    background: var(--surface-mid);
+}
+
+.animal-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.animal-id-label {
+    font-size: 12px;
+    color: var(--on-surface-var);
+    margin-bottom: 4px;
+}
+
+.animal-name {
+    font-size: 24px;
+    font-weight: 800;
+    color: var(--on-surface);
+    margin-bottom: 10px;
+}
+
+.animal-badge {
+    display: inline-block;
+    padding: 5px 14px;
+    background: rgba(236,91,19,0.1);
+    color: var(--primary);
+    font-size: 13px;
+    font-weight: 600;
+    border-radius: 999px;
+}
+
+.animal-info-empty {
+    text-align: center;
+    padding: 20px 0;
+    color: var(--on-surface-var);
+}
+
+.animal-info-empty .material-symbols-outlined {
+    font-size: 44px;
+    color: #ffc69f;
+    display: block;
+    margin-bottom: 10px;
+}
+
+.animal-info-empty p { font-size: 14px; margin-bottom: 14px; }
+
+.btn-go-list {
+    display: inline-block;
+    padding: 9px 22px;
+    background: var(--primary);
+    color: #fff;
+    font-weight: 700;
+    font-size: 13px;
+    border-radius: 10px;
+    text-decoration: none;
+    transition: background 0.2s;
+}
+.btn-go-list:hover { background: #d44e0e; }
+
+/* ---- 폼 요소 ---- */
+.form-grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+}
+
+.form-group.col-span-2 { grid-column: 1 / -1; }
+
+.form-group label,
+.form-question {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--on-surface);
+    margin: 0;
+}
+
+.required { color: var(--primary); }
+
+.form-input,
+.form-select,
+.form-textarea {
+    width: 100%;
+    background: var(--surface-low);
+    border: 1.5px solid transparent;
+    border-radius: var(--radius-input);
+    padding: 13px 18px;
+    font-size: 14px;
+    color: var(--on-surface);
+    font-family: 'Pretendard', sans-serif;
+    transition: border-color 0.18s, box-shadow 0.18s;
+    box-sizing: border-box;
+    outline: none;
+}
+
+.form-input::placeholder,
+.form-textarea::placeholder { color: #c4bdb8; }
+
+.form-input:focus,
+.form-select:focus,
+.form-textarea:focus {
+    border-color: rgba(236,91,19,0.32);
+    box-shadow: 0 0 0 3px rgba(236,91,19,0.07);
+    background: #fff;
+}
+
+.form-input.is-invalid,
+.form-select.is-invalid,
+.form-textarea.is-invalid {
+    border-color: #e53e3e;
+    background: #fff5f5;
+}
+
+.form-select {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%235f5b57' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    padding-right: 40px;
+    cursor: pointer;
+}
+
+.form-textarea {
+    resize: vertical;
+    min-height: 140px;
+    line-height: 1.75;
+}
+
+.mt-8  { margin-top: 8px; }
+.mt-16 { margin-top: 14px; }
+
+/* ---- 주소 검색 ---- */
+.address-row {
+    display: flex;
+    gap: 8px;
+}
+
+.postcode-input { flex: 0 0 160px; }
+
+.btn-postcode {
+    flex-shrink: 0;
+    padding: 0 18px;
+    height: 48px;
+    background: var(--surface-high);
+    color: var(--on-surface);
+    font-size: 13px;
+    font-weight: 600;
+    border: none;
+    border-radius: var(--radius-input);
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.2s;
+    font-family: 'Pretendard', sans-serif;
+}
+.btn-postcode:hover { background: #dfd4cb; }
+
+/* ---- 라디오 카드 ---- */
+.radio-group {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.radio-card { flex: 1; min-width: 120px; cursor: pointer; }
+
+.radio-card input[type="radio"] { display: none; }
+
+.radio-label {
+    display: block;
+    padding: 13px 8px;
+    text-align: center;
+    background: var(--surface-low);
+    border: 2px solid transparent;
+    border-radius: var(--radius-input);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--on-surface);
+    transition: all 0.18s;
+    user-select: none;
+}
+
+.radio-card input[type="radio"]:checked + .radio-label {
+    border-color: var(--primary);
+    background: var(--primary-light);
+    color: var(--primary);
+}
+
+/* 글자수 */
+.char-count {
+    font-size: 12px;
+    color: var(--on-surface-var);
+    text-align: right;
+    margin-top: 4px;
+}
+
+/* ---- 방문일 ---- */
+.visit-desc {
+    font-size: 13px;
+    color: var(--on-surface-var);
+    line-height: 1.7;
+    margin-bottom: 14px;
+}
+
+.date-wrap { position: relative; }
+
+.date-icon {
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--primary);
+    font-size: 18px;
+    pointer-events: none;
+}
+
+.date-wrap .form-input { padding-right: 44px; }
+
+/* ---- 유의사항 ---- */
+.notice-card {
+    background: var(--surface-low);
+    box-shadow: none;
+    border: 1px solid var(--border-color);
+}
+
+.notice-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.notice-list li {
+    font-size: 13px;
+    color: var(--on-surface-var);
+    padding-left: 18px;
+    position: relative;
+    line-height: 1.6;
+}
+
+.notice-list li::before {
+    content: '•';
+    position: absolute;
+    left: 0;
+    color: var(--primary);
+    font-weight: 700;
+}
+
+/* ---- 제출 버튼 ---- */
+.submit-card { text-align: center; }
+
+.btn-submit {
+    width: 100%;
+    padding: 18px;
+    background: linear-gradient(135deg, #d44e0e 0%, #ec5b13 55%, #ff7a2f 100%);
+    color: #fff;
+    font-size: 17px;
+    font-weight: 800;
+    border: none;
+    border-radius: 999px;
+    cursor: pointer;
+    font-family: 'Pretendard', sans-serif;
+    box-shadow: 0 8px 20px rgba(236,91,19,0.28);
+    transition: transform 0.15s, box-shadow 0.15s, opacity 0.15s;
+    letter-spacing: -0.01em;
+}
+
+.btn-submit:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 28px rgba(236,91,19,0.32);
+}
+
+.btn-submit:active {
+    transform: translateY(0);
+    box-shadow: 0 4px 10px rgba(236,91,19,0.22);
+}
+
+.btn-submit:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.submit-desc {
+    font-size: 13px;
+    color: var(--on-surface-var);
+    line-height: 1.7;
+    margin: 16px 0 0;
+}
+
+/* ---- 반응형 ---- */
+@media (max-width: 640px) {
+    .form-card { padding: 22px 18px; }
+
+    .form-grid-2 { grid-template-columns: 1fr; }
+
+    .form-group.col-span-2 { grid-column: 1; }
+
+    .page-title { font-size: 24px; }
+
+    .animal-info-row { flex-direction: column; align-items: flex-start; }
+
+    .radio-group { flex-direction: column; }
+
+    .radio-card { min-width: unset; }
+}
